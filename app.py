@@ -1,10 +1,9 @@
 from flask import Flask
+from application.routes.servant_routes import servant_bp
 
-app = Flask(__name__)
+def create_app():
+    app = Flask(__name__)
+    app.secret_key = "your-secret-key"
 
-@app.route('/')
-def hello():
-    return "Hello, World!"
-
-if __name__ == '__main__':
-    app.run(debug=True)
+    app.register_blueprint(servant_bp)#,url_prefix='/api')
+    return app

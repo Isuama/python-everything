@@ -1,0 +1,60 @@
+servant_app/
+├── app.py
+├── main.py
+├── config.py
+├── requirements.txt
+├── .gitignore
+├── __init__.py
+├── domain/
+│   ├── __init__.py
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── servant.py
+│   │   └── loan.py
+│   └── ports/
+│       ├── __init__.py
+│       ├── servant_port.py
+│       └── loan_port.py
+├── application/
+│   ├── __init__.py
+│   ├── services/
+│   │   ├── __init__.py
+│   │   ├── servant_service.py
+│   │   └── loan_service.py
+│   └── routes/
+│       ├── __init__.py
+│       ├── servant_routes.py
+│       └── loan_routes.py
+├── infrastructure/
+│   ├── __init__.py
+│   ├── database/
+│   │   ├── __init__.py
+│   │   └── mongo.py
+│   ├── repositories/
+│   │   ├── __init__.py
+│   │   ├── mongo_servant_repository.py
+│   │   └── mongo_loan_repository.py
+│   └── logging/
+│       ├── __init__.py
+│       └── custom_logger.py
+├── adapters/
+│   ├── __init__.py
+│   ├── api/
+│   │   ├── __init__.py
+│   │   ├── servant_adapter.py
+│   │   └── loan_adapter.py
+│   └── swagger/
+│       ├── __init__.py
+│       └── swagger_config.py
+├── templates/
+│   ├── __init__.py
+│   ├── base.html
+│   ├── servants.html
+│   └── loans.html
+├── tests/
+│   ├── __init__.py
+│   ├── test_servant.py
+│   └── test_loan.py
+└── docker/
+    ├── Dockerfile
+    └── docker-compose.yml

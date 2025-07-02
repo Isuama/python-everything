@@ -1,0 +1,202 @@
+<!-- Modal Overlay -->
+<div id="modal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex items-center justify-center">
+  <div class="bg-white rounded-xl shadow-lg p-8 w-full max-w-lg relative animate-fadeIn">
+    <!-- Close Button -->
+    <button onclick="toggleModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 text-2xl">&times;</button>
+
+    <!-- Form -->
+    <form id="profileForm" method="POST" action="/add" enctype="multipart/form-data" novalidate>
+      <h2 id="modalTitle" class="text-2xl font-bold text-gray-800 text-center">Add Profile</h2>
+
+      <!-- Full Name -->
+      <div>
+        <label for="fullName" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+        <input id="fullName" name="name" type="text" class="w-full border border-gray-300 rounded-md px-4 py-2" placeholder="John Doe" required />
+        <p id="fullNameError" class="text-red-600 text-sm mt-1 hidden">* Full Name is required.</p>
+      </div>
+
+      <!-- Nickname -->
+      <div>
+        <label for="nickname" class="block text-sm font-medium text-gray-700 mb-1">Nickname</label>
+        <input id="nickname" name="nickname" type="text" class="w-full border border-gray-300 rounded-md px-4 py-2" placeholder="Johnny" required />
+        <p id="nicknameError" class="text-red-600 text-sm mt-1 hidden">* Nickname is required.</p>
+      </div>
+
+      <!-- Profile Photo -->
+      <div>
+        <label for="photoInput" class="block text-sm font-medium text-gray-700 mb-2">Profile Photo</label>
+        <div class="flex items-center gap-4">
+          <div class="w-24 h-24 bg-gray-200 rounded-md overflow-hidden flex items-center justify-center">
+            <img id="photoPreview" class="w-full h-full object-cover hidden" alt="Profile Preview" />
+          </div>
+          <input
+            id="photoInput"
+            name="photoInput"
+            type="file"
+            accept="image/*"
+            onchange="previewPhoto(event)"
+            class="text-sm text-gray-500 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+          />
+        </div>
+      </div>
+
+      <!-- Daily Wage -->
+      <div>
+        <label for="dailyWage" class="block text-sm font-medium text-gray-700 mb-1">Daily Wage (LKR)</label>
+        <input id="dailyWage" name="wage" type="number" min="0" step="0.01" class="w-full border border-gray-300 rounded-md px-4 py-2" placeholder="100.00" required />
+        <p id="dailyWageError" class="text-red-600 text-sm mt-1 hidden">* Daily wage is required and must be 0 or more.</p>
+      </div>
+
+      <!-- Profile Color -->
+      <div>
+        <label for="profileColor" class="block text-sm font-medium text-gray-700 mb-1">Profile Color</label>
+        <input id="profileColor" name="color" type="color" value="#34D399" class="w-20 h-10 p-0 border border-gray-300 rounded-md cursor-pointer" required />
+        <p id="profileColorError" class="text-red-600 text-sm mt-1 hidden">* Please select a color.</p>
+      </div>
+
+      <!-- Is Active Toggle -->
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Is Active</label>
+        <div class="flex items-center">
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="isActive" name="isActive" class="sr-only peer" />
+            <div class="w-11 h-6 bg-gray-300 peer-checked:bg-green-500 rounded-full transition-colors duration-300"></div>
+            <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 peer-checked:translate-x-5"></div>
+          </label>
+          <!-- <span class="ml-3 text-sm text-gray-600">Enable user</span> -->
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div class="mt-6">
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md">Save Profile</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" class="fixed top-6 right-6 hidden bg-green-600 text-white px-6 py-3 rounded shadow-lg transition-opacity duration-300 z-50">
+  ✅ Profile saved successfully!
+</div>
+
+<!-- Scripts -->
+<script>
+  function toggleModal() {
+    document.getElementById("modal").classList.toggle("hidden");
+  }
+
+  function previewPhoto(event) {
+    const file = event.target.files[0];
+    const preview = document.getElementById("photoPreview");
+    if (file) {
+      preview.src = URL.createObjectURL(file);
+      preview.classList.remove("hidden");
+    } else {
+      preview.src = "";
+      preview.classList.add("hidden");
+    }
+  }
+
+  // Fill modal fields for edit mode
+  function openModal(mode = 'add', data = {}) {
+    toggleModal();
+
+    const form = document.getElementById("profileForm");
+    const modalTitle = document.getElementById("modalTitle");
+
+    if (mode === 'edit') {
+      modalTitle.textContent = "Edit Profile";
+      form.action = `/update/${data.id || ''}`;
+
+      document.getElementById("fullName").value = data.name || '';
+      document.getElementById("nickname").value = data.nickname || '';
+      document.getElementById("dailyWage").value = data.wage || '';
+      document.getElementById("profileColor").value = data.color || '#34D399';
+      document.getElementById("isActive").checked = data.isActive || false;
+
+      const preview = document.getElementById("photoPreview");
+      if (data.photoUrl) {
+        preview.src = data.photoUrl;
+        preview.classList.remove("hidden");
+      } else {
+        preview.src = "";
+        preview.classList.add("hidden");
+      }
+      // Clear file input on edit (optional)
+      document.getElementById("photoInput").value = '';
+    } else {
+      modalTitle.textContent = "Add Profile";
+      form.action = "/add";
+
+      form.reset();
+      document.getElementById("photoPreview").classList.add("hidden");
+    }
+  }
+
+  // Validation & form submit handler
+  document.getElementById("profileForm").addEventListener("submit", function (e) {
+    let valid = true;
+
+    const fullName = document.getElementById("fullName");
+    const nickname = document.getElementById("nickname");
+    // const photoInput = document.getElementById("photoInput"); // optional to require photo on edit
+    const dailyWage = document.getElementById("dailyWage");
+    const isActive = document.getElementById("isActive");
+    const profileColor = document.getElementById("profileColor");
+
+    if (fullName.value.trim() === "") {
+      document.getElementById("fullNameError").classList.remove("hidden");
+      valid = false;
+    } else {
+      document.getElementById("fullNameError").classList.add("hidden");
+    }
+
+    if (nickname.value.trim() === "") {
+      document.getElementById("nicknameError").classList.remove("hidden");
+      valid = false;
+    } else {
+      document.getElementById("nicknameError").classList.add("hidden");
+    }
+
+    // Photo input is optional for editing, so no error shown here
+
+    if (dailyWage.value.trim() === "" || isNaN(dailyWage.value) || Number(dailyWage.value) < 0) {
+      document.getElementById("dailyWageError").classList.remove("hidden");
+      valid = false;
+    } else {
+      document.getElementById("dailyWageError").classList.add("hidden");
+    }
+
+    if (!profileColor.value) {
+      document.getElementById("profileColorError").classList.remove("hidden");
+      valid = false;
+    } else {
+      document.getElementById("profileColorError").classList.add("hidden");
+    }
+
+    // No requirement to force toggle checked, but you can add if needed
+
+    if (!valid) {
+      e.preventDefault();
+      return;
+    }
+
+    document.getElementById("toast").classList.remove("hidden");
+    toggleModal();
+    setTimeout(() => {
+      document.getElementById("toast").classList.add("hidden");
+    }, 3000);
+  });
+</script>
+
+<!-- Animation Styles -->
+<style>
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .animate-fadeIn {
+    animation: fadeIn 0.2s ease-out;
+  }
+</style>
