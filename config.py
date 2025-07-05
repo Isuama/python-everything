@@ -12,3 +12,6 @@ class config:
     COSMOS_ENDPOINT = os.getenv("COSMOS_ENDPOINT")
     COSMOS_KEY = os.getenv("COSMOS_KEY")
     COSMOS_DATABASE = os.getenv("COSMOS_DATABASE", "servantdb")
+
+    # Calendar
+    CALENDAR_FIRST_WEEKDAY = "MONDAY"

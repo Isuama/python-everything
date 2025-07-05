@@ -8,7 +8,7 @@ class CosmosServantRepository(ServantPort):
         self.container = db.get_container(container_name="Servants", partition_key_path="/id")
 
     def get_all_servants(self):
-        query = "SELECT c.id,c.name,c.nickname,c.wage,c.isactive,c.photo,c.color FROM c"
+        query = "SELECT c.id, c.name, c.nickname, c.wage, c.isactive, c.photo, c.color FROM c"
 
         return [Servant(**item) for item in self.container.query_items(query, enable_cross_partition_query=True)]
     
