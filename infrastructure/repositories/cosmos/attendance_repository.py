@@ -14,3 +14,9 @@ class CosmosAttendanceRepository(AttendancePort):
         """
         results = self.container.query_items(query=query, enable_cross_partition_query=True)
         return [Attendance(**item) for item in results]
+
+    def create_attendance(self, attendance_item: dict):
+        self.container.create_item(attendance_item)
+
+    def delete_attendance(self, item_id: str, servant_id: str):
+        self.container.delete_item(item=item_id, partition_key=servant_id)

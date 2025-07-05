@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, flash, redirect, url_for
 from application.services.attendance_service import AttendanceService
 from infrastructure.repositories.cosmos.attendance_repository import CosmosAttendanceRepository
 from infrastructure.database.cosmos import CosmosDB
@@ -37,6 +37,17 @@ def view_attendance():
                            servants=active_servants,
                            attendance=attendance_lookup)
 
-@attendance_bp.route("/save_attendance",endpoint="save_attendance")
-def view_attendance():
-    return True
+@attendance_bp.route("/save_attendance", methods=["POST"])
+def save_attendance():
+    try:
+        year = int(request.form["year"])
+        month = int(request.form["month"])
+        form_data = request.form.to_dict(flat=False)
+
+        attendance_service.save_attendance(year, month, form_data)
+
+        flash("✅ Attendance saved successfully!", "success")
+    except Exception as e:
+        flash(f"❌ Error saving attendance: {str(e)}", "danger")
+
+    return redirect(url_for("attendance.attendance", year=year, month=month))
