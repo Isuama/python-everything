@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto p-6 bg-white rounded-lg shadow-md">
+  <h2 class="text-2xl font-semibold mb-6 text-gray-800">Loan Management</h2>
+
+  <!-- Servant Selection -->
+  <div class="mb-6">
+    <label for="servantSelect" class="block text-sm font-medium text-gray-700 mb-1">Select Servant</label>
+    <select id="servantSelect" name="servant_id_select"
+      class="w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <option value="" disabled selected>Choose a servant</option>
+      {% for servant in servants %}
+      <option value="{{ servant.id }}" data-name="{{ servant.name }}">{{ servant.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <!-- Form -->
+  <div class="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-8">
+    <h3 id="formHeading" class="text-xl font-semibold text-gray-700 mb-4">Add Loan or Settlement</h3>
+    <form id="loanForm" method="POST" action="/loan" class="space-y-4">
+      <input type="hidden" id="hiddenServantId" name="servant_id" value="">
+      <input type="hidden" id="servantName" name="servant_name" value="">
+
+      <div>
+        <label for="formType" class="block text-sm font-medium text-gray-700">Type</label>
+        <select id="formType" name="formType" class="w-full mt-1 p-2 border border-gray-300 rounded-md" disabled>
+          <option value="loan">Loan</option>
+          <option value="settlement">Settlement</option>
+        </select>
+      </div>
+
+      <!-- Loan Fields -->
+      <div id="loanFields" class="space-y-4 hidden">
+        <div>
+          <label for="loanAmount" class="block text-sm font-medium text-gray-700">Loan Amount</label>
+          <input type="number" id="loanAmount" name="loanAmount" min="0.01" step="0.01"
+            class="w-full mt-1 p-2 border border-gray-300 rounded-md" disabled required>
+        </div>
+        <div>
+          <label for="loanDate" class="block text-sm font-medium text-gray-700">Date Taken</label>
+          <input type="date" id="loanDate" name="loanDate"
+            class="w-full mt-1 p-2 border border-gray-300 rounded-md" disabled required>
+        </div>
+        <div>
+          <label for="loanRemark" class="block text-sm font-medium text-gray-700">Remark</label>
+          <input type="text" id="loanRemark" name="loanRemark"
+            class="w-full mt-1 p-2 border border-gray-300 rounded-md" disabled>
+        </div>
+      </div>
+
+      <!-- Settlement Fields -->
+      <div id="settlementFields" class="space-y-4 hidden">
+        <div>
+          <label for="loanIdSelect" class="block text-sm font-medium text-gray-700">Select Loan to Settle</label>
+          <select id="loanIdSelect" name="loan_id"
+            class="w-full mt-1 p-2 border border-gray-300 rounded-md" disabled required>
+            <option value="" disabled selected>Select a loan</option>
+          </select>
+        </div>
+        <div>
+          <label for="settledAmount" class="block text-sm font-medium text-gray-700">Settled Amount</label>
+          <input type="number" id="settledAmount" name="settledAmount" min="0.01" step="0.01"
+            class="w-full mt-1 p-2 border border-gray-300 rounded-md" disabled required>
+        </div>
+        <div>
+          <label for="settledDate" class="block text-sm font-medium text-gray-700">Settlement Date</label>
+          <input type="date" id="settledDate" name="settledDate"
+            class="w-full mt-1 p-2 border border-gray-300 rounded-md" disabled required>
+        </div>
+      </div>
+
+      <button type="submit" id="submitBtn"
+        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50" disabled>
+        Submit
+      </button>
+    </form>
+  </div>
+
+  <!-- Loan Table -->
+  <h3 class="text-lg font-medium text-gray-800 mb-2">Loan Records</h3>
+  <div class="overflow-x-auto mb-6">
+    <table class="min-w-full border text-sm text-left text-gray-700">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="p-3">Date Taken</th>
+          <th class="p-3">Loan Amount</th>
+          <th class="p-3">Remark</th>
+        </tr>
+      </thead>
+      <tbody id="loanTableBody"></tbody>
+    </table>
+  </div>
+
+  <!-- Settlement Table -->
+  <h3 class="text-lg font-medium text-gray-800 mb-2">Loan Settlements</h3>
+  <div class="overflow-x-auto">
+    <table class="min-w-full border text-sm text-left text-gray-700">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="p-3">Capital Loan Amount</th>
+          <th class="p-3">Settled Amount</th>
+          <th class="p-3">Settlement Date</th>
+          <th class="p-3">Balance</th>
+        </tr>
+      </thead>
+      <tbody id="settlementTableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  const servantSelect = document.getElementById('servantSelect');
+  const hiddenServantId = document.getElementById('hiddenServantId');
+  const servantNameInput = document.getElementById('servantName');
+  const loanForm = document.getElementById('loanForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const formHeading = document.getElementById('formHeading');
+  const formType = document.getElementById('formType');
+
+  const loanFields = document.querySelectorAll('#loanFields input');
+  const settlementFields = document.querySelectorAll('#settlementFields input, #loanIdSelect');
+
+  const loanTableBody = document.getElementById('loanTableBody');
+  const settlementTableBody = document.getElementById('settlementTableBody');
+  const loanIdSelect = document.getElementById('loanIdSelect');
+
+  const loans = {{ loans | tojson }};
+  const settlements = {{ settlements | tojson }};
+
+  function setInputsDisabled(inputs, disabled) {
+    inputs.forEach(input => input.disabled = disabled);
+  }
+
+  function setFormDisabled(disabled) {
+    formType.disabled = disabled;
+    setInputsDisabled(loanFields, disabled);
+    setInputsDisabled(settlementFields, disabled);
+    submitBtn.disabled = disabled;
+    if (!disabled) toggleFieldsByFormType();
+    else {
+      document.getElementById('loanFields').classList.add('hidden');
+      document.getElementById('settlementFields').classList.add('hidden');
+    }
+  }
+
+  function toggleFieldsByFormType() {
+    if (formType.value === 'loan') {
+      document.getElementById('loanFields').classList.remove('hidden');
+      document.getElementById('settlementFields').classList.add('hidden');
+      setInputsDisabled(loanFields, false);
+      setInputsDisabled(settlementFields, true);
+    } else {
+      document.getElementById('loanFields').classList.add('hidden');
+      document.getElementById('settlementFields').classList.remove('hidden');
+      setInputsDisabled(loanFields, true);
+      setInputsDisabled(settlementFields, false);
+    }
+  }
+
+  function sumSettlementsUpTo(loanId, date) {
+    return settlements
+      .filter(s => s.loan_id === loanId && s.settled_date <= date)
+      .reduce((acc, s) => acc + s.settled_amount, 0);
+  }
+
+  function populateTables(servantId) {
+    loanTableBody.innerHTML = '';
+    settlementTableBody.innerHTML = '';
+    loanIdSelect.innerHTML = '<option value="" disabled selected>Select a loan</option>';
+
+    if (!servantId) return;
+
+    const servantLoans = loans.filter(l => l.servant_id === servantId);
+    const servantSettlements = settlements.filter(s => s.servant_id === servantId);
+    servantSettlements.sort((a, b) => new Date(b.settled_date) - new Date(a.settled_date));
+
+    const settledTotals = {};
+    servantSettlements.forEach(s => {
+      settledTotals[s.loan_id] = (settledTotals[s.loan_id] || 0) + s.settled_amount;
+    });
+
+    servantLoans.forEach(loan => {
+      const totalSettled = settledTotals[loan.id] || 0;
+      const balance = loan.loan_amount - totalSettled;
+
+      loanTableBody.innerHTML += `
+        <tr>
+          <td class="p-2">${loan.date_taken}</td>
+          <td class="p-2">${loan.loan_amount.toFixed(2)}</td>
+          <td class="p-2">${loan.remark || ''}</td>
+        </tr>`;
+
+      if (balance > 0) {
+        const option = document.createElement('option');
+        option.value = loan.id;
+        option.textContent = `${loan.date_taken} - ${loan.loan_amount.toFixed(2)} (Balance: ${balance.toFixed(2)})`;
+        loanIdSelect.appendChild(option);
+      }
+    });
+
+    servantSettlements.forEach(settlement => {
+      const loan = loans.find(l => l.id === settlement.loan_id);
+      if (!loan) return;
+      const cumulativeSettled = sumSettlementsUpTo(loan.id, settlement.settled_date);
+      const balanceAfter = loan.loan_amount - cumulativeSettled;
+
+      settlementTableBody.innerHTML += `
+        <tr>
+          <td class="p-2">${loan.loan_amount.toFixed(2)}</td>
+          <td class="p-2">${settlement.settled_amount.toFixed(2)}</td>
+          <td class="p-2">${settlement.settled_date}</td>
+          <td class="p-2">${balanceAfter.toFixed(2)}</td>
+        </tr>`;
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    setFormDisabled(true);
+
+    servantSelect.addEventListener('change', () => {
+      const servantId = servantSelect.value;
+      const servantName = servantSelect.selectedOptions[0]?.dataset.name || '';
+      hiddenServantId.value = servantId;
+      servantNameInput.value = servantName;
+      formHeading.textContent = `Add Loan or Settlement - ${servantName}`;
+      setFormDisabled(!servantId);
+      populateTables(servantId);
+    });
+
+    formType.addEventListener('change', toggleFieldsByFormType);
+  });
+</script>
+{% endblock %}
