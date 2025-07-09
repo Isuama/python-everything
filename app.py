@@ -6,6 +6,7 @@ from application.routes.loan_routes import loan_bp
 from application.routes.wages_routes import wage_bp
 from application.routes.utility_routes import utility_bp
 from application.routes.utility_settlement_routes import utility_settlement_bp
+from application.routes.bonus_routes import bonus_bp
 
 def create_app():
     app = Flask(__name__)
@@ -17,5 +18,6 @@ def create_app():
     app.register_blueprint(wage_bp)
     app.register_blueprint(utility_bp)
     app.register_blueprint(utility_settlement_bp)
+    app.register_blueprint(bonus_bp)
  
     return app
