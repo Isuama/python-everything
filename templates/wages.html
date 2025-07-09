@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Wages{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto mt-8 px-4">
+  <h1 class="text-2xl font-semibold text-gray-800 mb-6">Servant Wage Payments</h1>
+
+  <!-- Latest Wage Update Section -->
+  <h2 class="text-xl font-medium text-gray-700 mb-4">Latest Paid Wages</h2>
+
+  <div class="overflow-x-auto mb-10">
+    <table class="min-w-full bg-white border border-gray-200 rounded-lg text-sm text-left">
+      <thead class="bg-gray-100 text-gray-700 uppercase text-xs">
+        <tr>
+          <th class="px-6 py-3 border-b">Servant Name</th>
+          <th class="px-6 py-3 border-b">Paid Amount (LKR)</th>
+          <th class="px-6 py-3 border-b">Paid Date</th>
+          <th class="px-6 py-3 border-b">Action</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        {% for servant in active_servants %}
+        <tr class="hover:bg-gray-50">
+          <form method="POST" action="/update_wages" class="contents">
+            <td class="px-6 py-3 text-gray-800">{{ servant.name }}</td>
+            <td class="px-6 py-3">
+              <input type="number" step="0.01" name="amount"
+                value="{{ servant.latest_payment.amount if servant.latest_payment else '' }}"
+                class="w-full border border-gray-300 rounded-md px-3 py-1 focus:ring-2 focus:ring-blue-500">
+            </td>
+            <td class="px-6 py-3">
+              <input type="date" name="date"
+                value="{{ servant.latest_payment.date if servant.latest_payment else current_date }}"
+                class="w-full border border-gray-300 rounded-md px-3 py-1 focus:ring-2 focus:ring-blue-500">
+            </td>
+            <td class="px-6 py-3">
+              <input type="hidden" name="servant_id" value="{{ servant.id }}">
+              <button type="submit"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded-md text-sm transition">Update</button>
+            </td>
+          </form>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- All Payment History -->
+  <h2 class="text-xl font-medium text-gray-700 mb-4">All Payment Records</h2>
+
+  <div class="overflow-x-auto">
+    <table class="min-w-full bg-white border border-gray-200 rounded-lg text-sm text-left">
+      <thead class="bg-gray-100 text-gray-700 uppercase text-xs">
+        <tr>
+          <th class="px-6 py-3 border-b">Servant Name</th>
+          <th class="px-6 py-3 border-b">Amount (LKR)</th>
+          <th class="px-6 py-3 border-b">Paid Date</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        {% for record in all_payments %}
+        <tr class="hover:bg-gray-50">
+          <td class="px-6 py-3 text-gray-800">{{ record.name }}</td>
+          <td class="px-6 py-3">{{ record.amount }}</td>
+          <td class="px-6 py-3">{{ record.date }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
