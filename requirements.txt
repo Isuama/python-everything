@@ -26,3 +26,5 @@ requests==2.31.0
 # Optional (for production grade)
 #loguru==0.7.2  # Advanced logging
 #Werkzeug==2.3.8
+
+Flask-Babel

@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for
 #from infrastructure.repositories.mongo_servant_repository import MongoServantRepository
-from infrastructure.repositories.cosmos.servant_repository import CosmosServantRepository
+from infrastructure.adapters.repositories.cosmos.servant_repository import CosmosServantRepository
 from application.services.servant_service import ServantService
 
 servant_bp = Blueprint("servant", __name__)

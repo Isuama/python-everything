@@ -1,11 +1,11 @@
 from azure.cosmos import CosmosClient, PartitionKey
-from config import config
+from infrastructure.config.db_config import DBConfig
 
 class CosmosDB:
     def __init__(self):
-        url = config.COSMOS_ENDPOINT
-        key = config.COSMOS_KEY
-        database_name = config.COSMOS_DATABASE
+        url = DBConfig.COSMOS_ENDPOINT
+        key = DBConfig.COSMOS_KEY
+        database_name = DBConfig.COSMOS_DATABASE
 
         self.client = CosmosClient(url, credential=key)
         self.database = self.client.create_database_if_not_exists(id=database_name)

@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from dependencies import servant_service,utility_service,utility_settlement_service  # import instances
-from utils.date_utils import get_current_date
+from infrastructure.utils.date_utils import get_current_date
 
 
 utility_settlement_bp = Blueprint("utilitySettlement", __name__)

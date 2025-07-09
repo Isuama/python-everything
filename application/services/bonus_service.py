@@ -1,6 +1,6 @@
-from domain.ports.bonus_port import BonusPort
-from domain.ports.servant_port import ServantPort
-from domain.models.bonus import Bonus,BonusDTO
+from core.ports.bonus_port import BonusPort
+from core.ports.servant_port import ServantPort
+from core.domain.bonus import Bonus,BonusDTO
 import uuid
 
 class BonusService:

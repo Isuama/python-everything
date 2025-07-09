@@ -1,5 +1,5 @@
-from domain.ports.utility_port import UtilityPort
-from domain.models.utility import Utility
+from core.ports.utility_port import UtilityPort
+from core.domain.utility import Utility
 import uuid
 
 class UtilityService:

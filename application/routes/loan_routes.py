@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from application.services.loan_service import LoanService
-from infrastructure.repositories.cosmos.loan_repository import CosmosLoanRepository
-from infrastructure.repositories.cosmos.settlement_repository import CosmosSettlementRepository
+from infrastructure.adapters.repositories.cosmos.loan_repository import CosmosLoanRepository
+from infrastructure.adapters.repositories.cosmos.settlement_repository import CosmosSettlementRepository
 from infrastructure.database.cosmos import CosmosDB
 
 loan_bp = Blueprint("loan", __name__)

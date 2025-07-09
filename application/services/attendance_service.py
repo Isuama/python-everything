@@ -1,4 +1,4 @@
-from domain.ports.attendance_port import AttendancePort
+from core.ports.attendance_port import AttendancePort
 from typing import Dict
 import calendar
 import uuid

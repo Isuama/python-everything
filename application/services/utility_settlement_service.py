@@ -1,7 +1,7 @@
-from domain.ports.utility_settlement_port import UtilitySettlementPort
-from domain.ports.servant_port import ServantPort
-from domain.ports.utility_port import UtilityPort
-from domain.models.utilitySettlement import UtilitySettlement,UtilitySettlementDTo
+from core.ports.utility_settlement_port import UtilitySettlementPort
+from core.ports.servant_port import ServantPort
+from core.ports.utility_port import UtilityPort
+from core.domain.utilitySettlement import UtilitySettlement,UtilitySettlementDTO
 import uuid
 
 class UtilitySettlementService:
@@ -25,7 +25,7 @@ class UtilitySettlementService:
             servant_name = servant_map.get(settlement.servant_id, "Unknown Servant")
             utility_type_name = utility_map.get(settlement.utility_type_id,"Unknown Utility")
 
-            settlement_with_name = UtilitySettlementDTo (
+            settlement_with_name = UtilitySettlementDTO (
                 id=settlement.id,
                 servant_id=settlement.servant_id,
                 utility_type_id = settlement.utility_type_id,

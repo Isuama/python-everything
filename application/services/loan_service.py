@@ -1,7 +1,7 @@
-from domain.ports.loan_port import LoanPort
-from domain.ports.settlement_port import SettlementPort
-from domain.models.loan import Loan
-from domain.models.settlement import Settlement
+from core.ports.loan_port import LoanPort
+from core.ports.settlement_port import SettlementPort
+from core.domain.loan import Loan
+from core.domain.settlement import Settlement
 import uuid
 
 class LoanService:

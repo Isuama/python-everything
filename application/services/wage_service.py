@@ -1,7 +1,7 @@
-from domain.ports.wage_port import WagePort
-from domain.models.wage import Wage, WageWithServantName 
-from domain.ports.servant_port import ServantPort
-from domain.models.servant import Servant
+from core.ports.wage_port import WagePort
+from core.domain.wage import Wage, WageWithServantName 
+from core.ports.servant_port import ServantPort
+from core.domain.servant import Servant
 import uuid
 
 class WageService:

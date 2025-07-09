@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from application.services.attendance_service import AttendanceService
-from infrastructure.repositories.cosmos.attendance_repository import CosmosAttendanceRepository
+from infrastructure.adapters.repositories.cosmos.attendance_repository import CosmosAttendanceRepository
 from infrastructure.database.cosmos import CosmosDB
-from utils.calendar_utils import get_calendar, get_weekday_labels
+from infrastructure.utils.calendar_utils import get_calendar, get_weekday_labels
 from datetime import datetime
 import calendar
 

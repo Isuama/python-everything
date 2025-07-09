@@ -1,5 +1,5 @@
-from domain.ports.servant_port import ServantPort
-from domain.models.servant import Servant
+from core.ports.servant_port import ServantPort
+from core.domain.servant import Servant
 from typing import List
 
 class ServantService:

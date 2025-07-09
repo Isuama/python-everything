@@ -3,36 +3,175 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{% block title %}Dashboard{% endblock %}</title>
-  
-  <!-- Tailwind CSS -->
+  <title>{% block title %}{{ _('Dashboard') }}{% endblock %}</title>
+  <!-- Tailwind and Lucide -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Optional: Custom styles or favicon -->
-  <link rel="icon" href="/static/favicon.ico">
+  <script src="https://unpkg.com/lucide@latest"></script> <!-- menu bar icons -->
+  <script src="https://unpkg.com/feather-icons"></script> <!-- feather icnos on button -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        fontFamily: {
+          sans: ['Inter', 'sans-serif']
+        }
+      }
+    }
+  </script>
 </head>
-<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+<!-- <body class="bg-gray-100 text-gray-800 font-sans"> -->
+  <body class="bg-[url('')] bg-cover bg-center min-h-screen text-gray-800">
+  <div class="flex min-h-screen">
 
-  <!-- Header -->
-  <header class="bg-white shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-      <h1 class="text-xl font-semibold">Servant Manager</h1>
-      <nav class="space-x-4">
-        <a href="/" class="text-blue-600 hover:underline">Home</a>
-        <a href="/servants" class="text-blue-600 hover:underline">Servants</a>
-        <a href="/loans" class="text-blue-600 hover:underline">Loans</a>
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow-lg">
+        <div class="p-6 text-xl font-bold border-b text-indigo-600 flex items-center gap-2">
+            <i data-lucide="users" class="w-6 h-6"></i>
+            <span>ServantApp</span>
+        </div>
+      <nav class="p-4 space-y-2 text-sm text-gray-700">
+        <a href="/" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-indigo-100">
+          <i data-lucide="layout-dashboard" class="w-5 h-5 text-indigo-500"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="/servants" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-indigo-100">
+          <i data-lucide="users" class="w-5 h-5 text-green-500"></i>
+          <span>Servants</span>
+        </a>
+        <a href="/attendance" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-indigo-100">
+          <i data-lucide="calendar-check" class="w-5 h-5 text-blue-500"></i>
+          <span>Attendance</span>
+        </a>
+        <a href="/loan" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-indigo-100">
+          <i data-lucide="hand-coins" class="w-5 h-5 text-red-500"></i>
+          <span>Loan</span>
+        </a>
+        <a href="/wages" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-indigo-100">
+          <i data-lucide="wallet" class="w-5 h-5 text-yellow-500"></i>
+          <span>Wages</span>
+        </a>
+        <a href="/utility" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-indigo-100">
+          <i data-lucide="plug-zap" class="w-5 h-5 text-purple-500"></i>
+          <span>Utility</span>
+        </a>
+        <a href="/utility_settlement" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-indigo-100">
+          <i data-lucide="file-check-2" class="w-5 h-5 text-pink-500"></i>
+          <span>Utility Settlement</span>
+        </a>
+        <a href="/bonuses" class="flex items-center gap-3 px-4 py-2 rounded hover:bg-indigo-100 transition text-gray-700">
+          <i data-lucide="gift" class="w-5 h-5 text-indigo-500"></i>
+          <span>Bonuses</span>
+        </a>
+        <a href="/payslip" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-indigo-100">
+          <i data-lucide="file-text" class="w-5 h-5 text-amber-500"></i>
+          <span>Payslip</span>
+        </a>
+        <a href="/prediction" class="flex items-center gap-3 px-3 py-2 rounded hover:bg-indigo-100">
+          <i data-lucide="activity" class="w-5 h-5 text-cyan-500"></i>
+          <span>Prediction Analysis</span>
+        </a>
+        <a href="/settings" class="flex items-center gap-3 px-4 py-2 rounded hover:bg-indigo-100 transition text-gray-700">
+          <i data-lucide="settings" class="w-5 h-5 text-indigo-500"></i>
+          <span>Settings</span>
+        </a>
+
       </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col">
+
+      <!-- Top Bar -->
+      <header class="flex items-center justify-between bg-white px-6 py-3 shadow">
+        <h1 class="text-lg font-semibold text-gray-700">{% block title_dashboard %}Dashboard{% endblock %}</h1>
+        <div class="flex items-center gap-4 relative">
+  <!-- Notification Bell -->
+  <button class="relative">
+    <i data-lucide="bell" class="w-5 h-5 text-gray-500"></i>
+    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1">3</span>
+  </button>
+
+  <!-- Language Selector Dropdown -->
+<div class="relative inline-block text-left">
+  <button onclick="toggleLangMenu()"
+  class="inline-flex items-center gap-2 border border-gray-300 bg-white px-3 py-2 rounded-md shadow-sm hover:bg-gray-50 
+         focus:outline-none focus:ring-0 focus:border-transparent">
+  {% if get_locale() == 'si' %}
+    <img src="https://flagcdn.com/w20/lk.png" alt="සිංහල" class="w-5 h-4" />
+    <span class="text-sm">සිංහල</span>
+  {% else %}
+    <img src="https://flagcdn.com/w20/gb.png" alt="English" class="w-5 h-4" />
+    <span class="text-sm">English</span>
+  {% endif %}
+  <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+  </svg>
+</button>
+
+
+  <div id="lang-menu" class="hidden absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow-lg z-50">
+    <form method="get" action="{{ url_for('lang.set_language') }}">
+      <button type="submit" name="lang" value="en" class="flex w-full items-center gap-2 px-3 py-2 hover:bg-gray-100 text-left">
+        <img src="https://flagcdn.com/w20/gb.png" alt="English" class="w-5 h-4" />
+        English
+      </button>
+      <button type="submit" name="lang" value="si" class="flex w-full items-center gap-2 px-3 py-2 hover:bg-gray-100 text-left">
+        <img src="https://flagcdn.com/w20/lk.png" alt="සිංහල" class="w-5 h-4" />
+        සිංහල
+      </button>
+    </form>
+  </div>
+</div>
+
+<script>
+  function toggleLangMenu() {
+    const menu = document.getElementById('lang-menu');
+    menu.classList.toggle('hidden');
+  }
+
+  // Optional: hide dropdown if clicked outside
+  document.addEventListener('click', function (e) {
+    const menu = document.getElementById('lang-menu');
+    const button = e.target.closest('button');
+    if (!menu.contains(e.target) && (!button || !button.onclick)) {
+      menu.classList.add('hidden');
+    }
+  });
+</script>
+
+  <!-- User Info -->
+  <div class="flex items-center gap-2">
+    <span class="text-gray-600 text-sm">Admin</span>
+    <img src="https://i.pravatar.cc/40?img=3" alt="User" class="w-8 h-8 rounded-full" />
+  </div>
+</div>
+
+      </header>
+
+      <!-- Flash messages -->
+      <main class="p-6">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="mb-4 px-4 py-2 rounded text-white font-semibold
+                {% if category == 'success' %}bg-green-500
+                {% elif category == 'danger' %}bg-red-500
+                {% elif category == 'warning' %}bg-yellow-500
+                {% else %}bg-blue-500{% endif %}">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+      </main>
     </div>
-  </header>
+  </div>
 
-  <!-- Main Content -->
-  <main class="flex-1">
-    {% block content %}{% endblock %}
-  </main>
-
-  <!-- Footer -->
-  <footer class="bg-white border-t text-center text-xs text-gray-400 py-2 mt-4">
-    &copy; {{ current_year | default(2025) }} Servant Manager App
-  </footer>
+  <!-- Init Lucide Icons -->
+  <script>
+    lucide.createIcons();
+  </script>
 </body>
 </html>
