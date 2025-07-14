@@ -14,7 +14,8 @@ class CosmosContainerRegistry:
             "servants": db.get_container("Servants", "/id"),            
             "utility": db.get_container("Utility", "/id"),
             "utilitySettlement": db.get_container("UtilitySettlement", "/servant_id"),
-            "Wages": db.get_container("Wages", "/servant_id"),
+            "wages": db.get_container("Wages", "/servant_id"),
+            "wageAdjustments": db.get_container("WageAdjustments", "/servant_id"),
             "weeklyCarryForward": db.get_container("WeeklyCarryForward", "/servant_id"),
         }
 

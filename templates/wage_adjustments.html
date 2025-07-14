@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+{% block title %}Wage Adjustments{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto p-4 bg-white rounded shadow">
+  <h2 class="text-xl font-semibold mb-4">Add Wage Adjustment</h2>
+
+  <form method="POST" action="/wage_adjustments" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Servant</label>
+      <select name="servant_id" class="w-full border rounded px-2 py-1 text-sm">
+        {% for servant in servants %}
+          <option value="{{ servant.id }}">{{ servant.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Amount</label>
+      <input type="number" step="0.01" name="amount" required class="w-full border rounded px-2 py-1 text-sm">
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+      <input type="date" name="adjustment_date" value="{{ current_date }}" class="w-full border rounded px-2 py-1 text-sm">
+    </div>
+
+    <div class="md:col-span-3">
+      <label class="block text-sm font-medium text-gray-700 mb-1">Remarks</label>
+      <textarea name="remarks" rows="2" class="w-full border rounded px-2 py-1 text-sm"></textarea>
+    </div>
+
+    <div class="md:col-span-3">
+      <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+        Save Adjustment
+      </button>
+    </div>
+  </form>
+
+  <h3 class="text-lg font-semibold mb-2">Adjustment History</h3>
+  <div class="overflow-x-auto">
+    <table class="min-w-full border text-sm text-left">
+      <thead class="bg-gray-100">
+        <tr>
+          <!-- ID column hidden -->
+          <!-- <th class="border px-3 py-2">Id</th> -->
+          <th class="border px-3 py-2">Servant</th>
+          <th class="border px-3 py-2">Amount</th>
+          <th class="border px-3 py-2">Date</th>
+          <th class="border px-3 py-2">Remarks</th>
+          <th class="border px-3 py-2 text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for adj in adjustments %}
+          <tr class="hover:bg-gray-50">
+            <!-- <td class="border px-3 py-2">{{ adj.id }}</td> -->
+            <td class="border px-3 py-2">{{ adj.servant_name }}</td>
+            <td class="border px-3 py-2">{{ adj.amount }}</td>
+            <td class="border px-3 py-2">{{ adj.adjustment_date }}</td>
+            <td class="border px-3 py-2">{{ adj.remarks }}</td>
+            <td class="border px-3 py-2 text-center">
+              <!-- Edit button -->
+              <a href="#"
+                 class="text-blue-600 hover:text-blue-800 mr-2 edit-btn"
+                 title="Edit"
+                 data-id="{{ adj.id }}"
+                 data-servant_id="{{ adj.servant_id }}"
+                 data-amount="{{ adj.amount }}"
+                 data-adjustment_date="{{ adj.adjustment_date }}"
+                 data-remarks="{{ adj.remarks|default('') }}">
+                <i data-feather="edit" class="w-4 h-4 inline"></i>
+              </a>
+
+              <!-- Delete button -->
+              <form action="{{ url_for('wage_adjustments.delete', id=adj.id) }}" method="POST" class="inline delete-form" data-id="{{ adj.id }}">
+                <button type="submit" class="text-red-600 hover:text-red-800 delete-btn" title="Delete">
+                  <i data-feather="trash-2" class="w-4 h-4 inline"></i>
+                </button>
+              </form>
+            </td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="5" class="border px-3 py-2 text-center text-gray-500">No adjustments recorded</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Edit Wage Adjustment Modal -->
+<div class="modal fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center" id="editWageModal" style="z-index: 9999;">
+  <div class="bg-white rounded p-6 w-full max-w-md relative">
+    <button type="button" class="absolute top-2 right-2 text-gray-600 hover:text-gray-900 text-2xl font-bold" id="closeModalBtn">&times;</button>
+    <h3 class="text-xl font-semibold mb-4">Edit Wage Adjustment</h3>
+
+    <form id="editWageForm" method="POST" action="">
+      <input type="hidden" name="id" id="editAdjustmentId" />
+
+      <div class="mb-4">
+        <label for="editServantId" class="block text-sm font-medium text-gray-700 mb-1">Servant</label>
+        <select id="editServantId" name="servant_id" class="w-full border rounded px-2 py-1 text-sm">
+          {% for servant in servants %}
+            <option value="{{ servant.id }}">{{ servant.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="mb-4">
+        <label for="editAmount" class="block text-sm font-medium text-gray-700 mb-1">Amount</label>
+        <input type="number" step="0.01" id="editAmount" name="amount" required class="w-full border rounded px-2 py-1 text-sm" />
+      </div>
+
+      <div class="mb-4">
+        <label for="editDate" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+        <input type="date" id="editDate" name="adjustment_date" required class="w-full border rounded px-2 py-1 text-sm" />
+      </div>
+
+      <div class="mb-4">
+        <label for="editRemarks" class="block text-sm font-medium text-gray-700 mb-1">Remarks</label>
+        <textarea id="editRemarks" name="remarks" rows="2" class="w-full border rounded px-2 py-1 text-sm"></textarea>
+      </div>
+
+      <div class="text-right">
+        <button type="button" id="cancelModalBtn" class="mr-2 px-4 py-2 rounded border border-gray-300">Cancel</button>
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteConfirmModal" class="modal fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center" style="z-index: 10000;">
+  <div class="bg-white rounded p-6 w-full max-w-sm relative">
+    <h3 class="text-xl font-semibold mb-4">Confirm Delete</h3>
+    <p class="mb-6">Are you sure you want to delete this adjustment?</p>
+
+    <form id="deleteForm" method="POST" action="">
+      <div class="flex justify-end space-x-4">
+        <button type="button" id="cancelDeleteBtn" class="px-4 py-2 border rounded border-gray-300 hover:bg-gray-100">Cancel</button>
+        <button type="submit" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded">Delete</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  feather.replace();
+
+  // Edit Modal Elements
+  const editModal = document.getElementById('editWageModal');
+  const closeModalBtn = document.getElementById('closeModalBtn');
+  const cancelModalBtn = document.getElementById('cancelModalBtn');
+  const editForm = document.getElementById('editWageForm');
+
+  // Open edit modal and fill form fields
+  function openEditModal(data) {
+    document.getElementById('editAdjustmentId').value = data.id;
+    document.getElementById('editServantId').value = data.servant_id;
+    document.getElementById('editAmount').value = data.amount;
+    document.getElementById('editDate').value = data.adjustment_date;
+    document.getElementById('editRemarks').value = data.remarks || '';
+
+    // Set form action URL - update to match your route as needed
+    editForm.action = `/wage_adjustments/${data.id}/edit`;
+
+    editModal.classList.remove('hidden');
+    editModal.classList.add('flex');
+  }
+
+  // Close edit modal
+  function closeEditModal() {
+    editModal.classList.remove('flex');
+    editModal.classList.add('hidden');
+  }
+
+  closeModalBtn.addEventListener('click', closeEditModal);
+  cancelModalBtn.addEventListener('click', closeEditModal);
+
+  // Attach edit button click handlers
+  document.querySelectorAll('.edit-btn').forEach(button => {
+    button.addEventListener('click', (e) => {
+      e.preventDefault();
+      const btn = e.currentTarget;
+      openEditModal({
+        id: btn.dataset.id,
+        servant_id: btn.dataset.servant_id,
+        amount: btn.dataset.amount,
+        adjustment_date: btn.dataset.adjustment_date,
+        remarks: btn.dataset.remarks
+      });
+    });
+  });
+
+
+  // Delete Modal Elements
+  const deleteModal = document.getElementById('deleteConfirmModal');
+  const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+  const deleteForm = document.getElementById('deleteForm');
+
+  // Close delete modal
+  function closeDeleteModal() {
+    deleteModal.classList.add('hidden');
+    deleteModal.classList.remove('flex');
+  }
+
+  cancelDeleteBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    closeDeleteModal();
+  });
+
+  // Intercept all delete buttons to show confirmation modal
+  document.querySelectorAll('.delete-btn').forEach(button => {
+    button.addEventListener('click', function(event) {
+      event.preventDefault(); // Stop immediate form submit
+      const form = this.closest('form');
+
+      // Update delete modal form action to the correct URL
+      deleteForm.action = form.action;
+
+      // Show modal
+      deleteModal.classList.remove('hidden');
+      deleteModal.classList.add('flex');
+    });
+  });
+</script>
+{% endblock %}

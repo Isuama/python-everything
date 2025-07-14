@@ -9,6 +9,7 @@ from infrastructure.adapters.repositories.cosmos.utility_repository import Cosmo
 from infrastructure.adapters.repositories.cosmos.utility_settlement_repository import CosmosUtilitySettlementRepository
 from infrastructure.adapters.repositories.cosmos.bonus_repository import CosmosBonusRepository
 from infrastructure.adapters.repositories.cosmos.attendance_repository import CosmosAttendanceRepository
+from infrastructure.adapters.repositories.cosmos.wage_adjustments_repository import CosmosWageAdjustmentRepository
 #from infrastructure.repositories.cosmos.dashboard_repository import DashboardRepository
 
 # services
@@ -18,6 +19,7 @@ from application.services.utility_service import UtilityService
 from application.services.utility_settlement_service import UtilitySettlementService
 from application.services.bonus_service import BonusService
 from application.services.attendance_service import AttendanceService
+from application.services.wage_adjustments_service import WageAdjustmentService
 #from application.services.dashboard_service import DashboardService
 #from application.services.payslip_service import PayslipService
 
@@ -44,3 +46,10 @@ def get_utility_settlement_service():
     utility_settlement_container = registry.get("utility")
     repository = CosmosUtilitySettlementRepository(utility_settlement_container)
     return UtilitySettlementService(repository)
+
+def get_wage_adjustment_Service():
+    servant_container = registry.get("servants")
+    servant_repository = CosmosServantRepository(servant_container)
+    wage_adjustment_container = registry.get("wageAdjustments")
+    wage_adjustment_repository = CosmosWageAdjustmentRepository(wage_adjustment_container)
+    return WageAdjustmentService(servant_repository,wage_adjustment_repository)
