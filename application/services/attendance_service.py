@@ -1,18 +1,20 @@
+from core.ports.servant_port import ServantPort
 from core.ports.attendance_port import AttendancePort
 from typing import Dict
 import calendar
 import uuid
 
 class AttendanceService:
-    def __init__(self, repository: AttendancePort):
-        self.repository = repository
+    def __init__(self, servant_repository: ServantPort, attendance_repository: AttendancePort):
+        self.servant_repository = servant_repository
+        self.attendance_repository = attendance_repository
 
     def build_attendance_lookup(self, year: int, month: int) -> Dict[int, Dict[str, bool]]:
         last_day = calendar.monthrange(year, month)[1]
         start_date = f"{year:04d}-{month:02d}-01"
         end_date = f"{year:04d}-{month:02d}-{last_day:02d}"
 
-        records = self.repository.get_attendance_records(start_date, end_date)
+        records = self.attendance_repository.get_attendance_records(start_date, end_date)
 
         lookup = {}
         for record in records:
@@ -36,7 +38,7 @@ class AttendanceService:
         start_date = f"{year:04d}-{month:02d}-01"
         end_date = f"{year:04d}-{month:02d}-{last_day:02d}"
 
-        existing_records = self.repository.get_attendance_records(start_date, end_date)
+        existing_records = self.attendance_repository.get_attendance_records(start_date, end_date)
 
         # Build existing set
         existing_set = set()
@@ -50,7 +52,7 @@ class AttendanceService:
         # Create new attendance
         for day, servant_id in checked_attendance - existing_set:
             record_date = f"{year:04d}-{month:02d}-{day:02d}"
-            self.repository.create_attendance({
+            self.attendance_repository.create_attendance({
                 "id": str(uuid.uuid4()),
                 "servant_id": servant_id,
                 "date": record_date,
@@ -61,4 +63,4 @@ class AttendanceService:
         for day_servant in existing_set - checked_attendance:
             rec_id = id_map[day_servant]
             servant_id = day_servant[1]
-            self.repository.delete_attendance(rec_id, servant_id)
+            self.attendance_repository.delete_attendance(rec_id, servant_id)

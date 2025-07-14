@@ -5,13 +5,11 @@ from infrastructure.database.cosmos import CosmosDB
 from infrastructure.utils.calendar_utils import get_calendar, get_weekday_labels
 from datetime import datetime
 import calendar
+from dependencies import get_servant_service,get_attendance_Service
 
 attendance_bp = Blueprint("attendance", __name__)
-attendance_service = AttendanceService(CosmosAttendanceRepository())
-
-# You might already have this shared somewhere:
-db = CosmosDB()
-servants_container = db.get_container(container_name="Servants", partition_key_path="/id")
+servant_service=get_servant_service()
+attendance_service=get_attendance_Service()
 
 @attendance_bp.route("/attendance",endpoint="attendance")
 def view_attendance():
@@ -22,8 +20,9 @@ def view_attendance():
     month_days = get_calendar(year, month)
     month_name = calendar.month_name[month]
 
-    all_servants = list(servants_container.read_all_items())
-    active_servants = [s for s in all_servants if s.get("isactive")]
+    #all_servants = list(get_servant_service().get_all_servants())
+    #active_servants = [s for s in all_servants if s.get("isactive")]
+    active_servants = get_servant_service().get_all_active_servants();
 
     attendance_lookup = attendance_service.build_attendance_lookup(year, month)
     weekday_labels = get_weekday_labels()

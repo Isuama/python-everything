@@ -3,9 +3,8 @@ from core.domain.wage import Wage
 from infrastructure.database.cosmos import CosmosDB
 
 class CosmosWageRepository(WagePort):
-    def __init__(self):
-        db = CosmosDB()
-        self.container = db.get_container(container_name="Salaries", partition_key_path="/servant_id")
+    def __init__(self,container):
+        self.container = container
 
     def add(self, wage: Wage):
         self.container.create_item(wage.model_dump())

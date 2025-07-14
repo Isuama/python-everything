@@ -3,9 +3,8 @@ from core.domain.attendance import Attendance
 from infrastructure.database.cosmos import CosmosDB
 
 class CosmosAttendanceRepository(AttendancePort):
-    def __init__(self):
-        db = CosmosDB()
-        self.container = db.get_container(container_name="Attendance", partition_key_path="/id")
+    def __init__(self,container):
+        self.container = container
 
     def get_attendance_records(self, start_date: str, end_date: str):
         query = f"""

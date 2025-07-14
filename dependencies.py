@@ -32,10 +32,12 @@ def get_servant_service():
     repository = CosmosServantRepository(servant_container)
     return ServantService(repository)
 
-def get_wage_service():
-    wage_container = registry.get("wages")
-    repository = CosmosWageRepository(wage_container)
-    return WageService(repository)
+def get_attendance_Service():
+    servant_container = registry.get("servants")
+    servant_repository = CosmosServantRepository(servant_container)
+    attendance_container = registry.get("attendance")
+    attendance_repository = CosmosAttendanceRepository(attendance_container)
+    return AttendanceService(servant_repository,attendance_repository)
 
 def get_utility_service():
     utility_container = registry.get("utility")
@@ -46,6 +48,13 @@ def get_utility_settlement_service():
     utility_settlement_container = registry.get("utility")
     repository = CosmosUtilitySettlementRepository(utility_settlement_container)
     return UtilitySettlementService(repository)
+
+def get_wage_service():
+    servant_container = registry.get("servants")
+    servant_repository = CosmosServantRepository(servant_container)
+    wage_container = registry.get("wages")
+    wage_repository = CosmosWageRepository(wage_container)
+    return WageService(servant_repository,wage_repository)
 
 def get_wage_adjustment_Service():
     servant_container = registry.get("servants")

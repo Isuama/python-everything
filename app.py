@@ -5,10 +5,10 @@ from application.routes.translation_routes import lang_bp
 from application.routes.dashboard_routes import dashboard_bp
 from application.routes.servant_routes import servant_bp
 from application.routes.wage_adjustments_routes import wage_adjustments_bp
+from application.routes.attendance_routes import attendance_bp
 
-#from application.routes.attendance_routes import attendance_bp
 #from application.routes.loan_routes import loan_bp
-#from application.routes.wages_routes import wage_bp
+from application.routes.wages_routes import wage_bp
 #from application.routes.utility_routes import utility_bp
 #from application.routes.utility_settlement_routes import utility_settlement_bp
 #from application.routes.bonus_routes import bonus_bp
@@ -37,9 +37,9 @@ def create_app():
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(servant_bp)
     app.register_blueprint(wage_adjustments_bp)
-    # app.register_blueprint(attendance_bp)
+    app.register_blueprint(attendance_bp)
     # app.register_blueprint(loan_bp)
-    # app.register_blueprint(wage_bp)
+    app.register_blueprint(wage_bp)
     # app.register_blueprint(utility_bp)
     # app.register_blueprint(utility_settlement_bp)
     # app.register_blueprint(bonus_bp)

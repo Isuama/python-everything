@@ -5,18 +5,18 @@ from core.domain.servant import Servant
 import uuid
 
 class WageService:
-    def __init__(self, wage_repo: WagePort, servant_repo: ServantPort):
-        self.wage_repo = wage_repo
+    def __init__(self, servant_repo: ServantPort, wage_repo: WagePort):
         self.servant_repo = servant_repo
+        self.wage_repo = wage_repo
 
     def get_all_wages_with_names(self) -> list[Wage]:
         wages = self.wage_repo.get_all()
-        servants = self.servant_repo.get_all_servants()
+        servants = self.servant_repo.get_all_active_servants()
         servant_map = {s.id: s.name for s in servants}
         wages_with_names = []
         for wage in wages:
             name = servant_map.get(wage.servant_id, "Unknown")
-            # Build a new Wage model including name
+            # Build a new Wage model                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         including name
             wage_with_name = WageWithServantName (
                 id=wage.id,
                 servant_id=wage.servant_id,
