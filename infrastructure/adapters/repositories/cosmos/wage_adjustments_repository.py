@@ -7,7 +7,11 @@ class CosmosWageAdjustmentRepository(WageAdjustmentPort):
         self.container = container
 
     def get_all_wage_adjustments(self):
-         query = "SELECT c.id, c.servant_id, c.amount, c.adjustment_date, c.remarks FROM c ORDER BY c.adjustment_date DESC"
+         query = """
+            SELECT c.id, c.servant_id, c.amount, c.adjustment_date, c.remarks
+            FROM c
+            ORDER BY c.adjustment_date DESC
+        """
          return [WageAdjustment(**item) for item in self.container.query_items(query, enable_cross_partition_query=True)]
     
     def get_wage_adjustments_by_id(self, id: str):
