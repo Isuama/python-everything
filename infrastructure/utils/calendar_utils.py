@@ -27,3 +27,7 @@ def get_weekday_labels():
     first_day = WEEKDAYS_MAP.get(weekday_str, calendar.MONDAY)
     weekdays = list(calendar.day_name)
     return weekdays[first_day:] + weekdays[:first_day]
+
+def get_month_name(month):
+    import calendar
+    return calendar.month_name[month]

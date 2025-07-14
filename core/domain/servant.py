@@ -6,7 +6,8 @@ class Servant(BaseModel):
     id: str
     name: str
     nickname: str
-    wage: str
-    isactive: bool
+    wage: float
     photo: Optional[str] = None
     color: Optional[str] = None
+    isactive: bool
+    

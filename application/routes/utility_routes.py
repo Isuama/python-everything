@@ -1,9 +1,9 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from dependencies import utility_service  # import instances
+from dependencies import get_utility_service
 
 
 utility_bp = Blueprint("utility", __name__)
-
+utility_service=get_utility_service()
 
 @utility_bp.route("/utility", methods=["GET"])
 def get_all_utilities():

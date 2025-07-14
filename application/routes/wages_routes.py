@@ -1,12 +1,12 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from dependencies import wage_service, servant_service  # import instances
+from dependencies import get_servant_service,get_wage_service
 
 
 wage_bp = Blueprint("wages", __name__)
-
+servant_service = get_servant_service
+wage_service = get_wage_service
 
 @wage_bp.route("/wages", methods=["GET"])
-
 def get_all_wages():
     servants = servant_service.get_servants()
     all_payments = wage_service.get_all_wages_with_names()

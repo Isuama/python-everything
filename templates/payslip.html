@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% block title %}Payslip{% endblock %}
+{% block page_heading %}Payslip{% endblock %}
+
+{% block content %}
+<div class="bg-gray-100 p-4">
+
+  <!-- Top Filter Section -->
+<div class="bg-gray-100 p-6 min-h-screen">
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    <!-- Left Column: Filter Panel -->
+    <div class="bg-white p-6 rounded-xl shadow border border-gray-200">
+      <h2 class="text-lg font-semibold text-gray-700 mb-4">Generate Payslip</h2>
+
+      <form method="post" action="/payslip" class="space-y-4" id="payslipForm">
+        <!-- Servant Name -->
+        <div>
+          <label for="servant" class="block text-sm font-medium text-gray-600 mb-1">Servant Name</label>
+          <select id="servant" name="servant" class="w-full border-gray-300 rounded-lg px-3 py-2 text-sm shadow-sm focus:ring focus:ring-indigo-100 focus:border-indigo-400">
+            {% for servant in servants %}
+              <option value="{{ servant.id }}" {% if selected_servant_id == servant.id %}selected{% endif %}>{{ servant.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Year -->
+        <div>
+          <label for="year" class="block text-sm font-medium text-gray-600 mb-1">Year</label>
+          <select id="year" name="year" class="w-full border-gray-300 rounded-lg px-3 py-2 text-sm shadow-sm focus:ring focus:ring-indigo-100 focus:border-indigo-400" onchange="document.getElementById('payslipForm').submit();">
+            {% for y in range(2025, 2026) %}
+              <option value="{{ y }}" {% if selected_year == y %}selected{% endif %}>{{ y }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Month -->
+        <div>
+          <label for="month" class="block text-sm font-medium text-gray-600 mb-1">Month</label>
+          <select id="month" name="month" class="w-full border-gray-300 rounded-lg px-3 py-2 text-sm shadow-sm focus:ring focus:ring-indigo-100 focus:border-indigo-400" onchange="document.getElementById('payslipForm').submit();">
+            {% for num, name in [
+              (1, "January"), (2, "February"), (3, "March"), (4, "April"),
+              (5, "May"), (6, "June"), (7, "July"), (8, "August"),
+              (9, "September"), (10, "October"), (11, "November"), (12, "December")
+            ] %}
+              <option value="{{ num }}" {% if selected_month == num %}selected{% endif %}>{{ name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Submit Button -->
+        <div>
+          <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition">
+            View Payslip
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Right Column: Payslip Card -->
+    <div class="bg-white p-6 rounded-xl shadow overflow-hidden">
+      
+  <div class="max-w-xs mx-auto bg-white p-4 rounded-lg shadow-lg print:max-w-none print:shadow-none print:p-0 print:rounded-none font-sans text-gray-800 text-sm leading-snug">
+    <header class="mb-4 border-b border-gray-300 pb-2">
+      <h1 class="text-lg font-bold text-center tracking-wide">Payslip</h1>
+      <p class="text-center text-gray-600 mt-0.5 text-[10px] uppercase tracking-wider">{{ _('Month') }} : {{ _(month_name) }}/{{ selected_year }}</p>
+    </header>
+
+    <!-- Employee Details -->
+    <section class="mb-5">
+      <h2 class="font-semibold text-sm border-b border-gray-300 pb-1 mb-2">{{_('Name')}}: <span class="font-normal">{{ _(servant_name) }}</span></h2>
+
+    <div class="w-full p-3 bg-gray-50 rounded shadow font-mono text-gray-700 mx-auto">
+    <!-- Days of the week -->
+    <div class="grid grid-cols-7 text-xs font-semibold text-gray-500 mb-2 select-none">
+      <div class="text-center">{{ _('Mo') }}</div>
+      <div class="text-center">{{ _('Tu') }}</div>
+      <div class="text-center">{{ _('We') }}</div>
+      <div class="text-center">{{ _('Th') }}</div>
+      <div class="text-center">{{ _('Fr') }}</div>
+      <div class="text-center">{{ _('Sa') }}</div>
+      <div class="text-center">{{ _('Su') }}</div>
+    </div>
+
+    <!-- Dates -->
+    <div class="grid grid-cols-7 text-xs text-center text-gray-700 gap-x-0.5 gap-y-0.5">
+      {% set day_counter = 1 %}
+      {% for day in calendar_days %}
+        {% if day == 0 %}
+          <div class="p-1"></div>  {# Blank for leading/trailing days #}
+        {% else %}
+          {% set day_str = "{}-{:02d}-{:02d}".format(selected_year, selected_month, day) %}
+          <div class="p-1 {% if day_str in attendance_dates %}rounded-full bg-gray-300{% endif %}">{{ day }}</div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    </section>
+
+    <!-- Salary Details -->
+    <section class="mb-5">
+      <h2 class="font-semibold text-sm border-b border-gray-300 pb-1 mb-2">{{_('Salary Details')}}</h2>
+      <table class="w-full text-gray-700 text-xs">
+        <tbody>
+          <tr>
+            <td class="py-1">{{_('Per day Salary')}}</td>
+            <td class="text-right py-1">{{ salary_per_day }}</td>
+          </tr>
+          <tr class="bg-gray-50">
+            <td class="py-1">{{_('Number of worked days')}}</td>
+            <td class="text-right py-1">{{ total_attendance }}</td>
+          </tr>
+          <tr class="bg-gray-50 font-semibold border-t border-gray-300">
+            <td class="py-1">{{_('Total Earnings')}}</td>
+            <td class="text-right py-1">{{ total_earnings }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Deductions -->
+    <section class="mb-5">
+      <h2 class="font-semibold text-sm border-b border-gray-300 pb-1 mb-2">{{_('Deductions')}}</h2>
+      <table class="w-full text-gray-700 text-xs">
+        <tbody>
+          <tr>
+            <td class="py-1">{{_('Loan Capital')}}</td>
+            <td class="text-right py-1">{{ loan_capital }}</td>
+          </tr>
+          <tr class="bg-gray-50">
+            <td class="py-1">{{_('Loan Balance')}}</td>
+            <td class="text-right py-1">{{ loan_balance }}</td>
+          </tr>
+          <tr class="bg-gray-50 font-semibold border-t border-gray-300">
+            <td class="py-1">{{_('Total Deductions')}}</td>
+            <td class="text-right py-1">{{ total_deductions }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Net Pay -->
+    <section class="text-right mb-5">
+      <p class="text-base font-semibold text-green-700 tracking-wide">{{_('Net Pay')}}: <span class="text-lg">{{_('LKR')}} {{ net_pay }}</span></p>
+    </section>
+
+    <!-- Utility -->
+    <section>
+      <h2 class="font-semibold text-sm border-b border-gray-300 pb-1 mb-2">{{_('Utility')}}</h2>
+      <table class="w-full text-gray-700 text-xs">
+        <tbody>
+          {% if utility_summary %}
+            {% for item in utility_summary %}
+              <tr class="{% if loop.index0 % 2 == 1 %}bg-gray-50{% endif %}">
+                <td class="py-1">{{_(item.utility_type)}}</td>
+                <td class="text-right py-1">{{ item.total_paid | float | round(2) }}</td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="2" class="py-1 text-center text-gray-400 italic">{{_('No utility data')}}</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </section>
+
+  </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1; // months start from 0 in JS
+
+    const yearSelect = document.getElementById('year');
+    const monthSelect = document.getElementById('month');
+
+    if (yearSelect) {
+      yearSelect.value = currentYear.toString();
+    }
+
+    if (monthSelect) {
+      monthSelect.value = currentMonth.toString();
+    }
+  });
+</script>
+
+
+{% endblock %}

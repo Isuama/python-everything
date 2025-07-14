@@ -20,3 +20,18 @@ class CosmosAttendanceRepository(AttendancePort):
 
     def delete_attendance(self, item_id: str, servant_id: str):
         self.container.delete_item(item=item_id, partition_key=servant_id)
+
+    def get_attendance_dates_by_servant(self,servant_id, start_date, end_date):
+        query = """
+            SELECT c.date FROM c 
+            WHERE c.servant_id = @sid AND c.present = true 
+            AND c.date >= @start AND c.date < @end
+            ORDER BY c.date
+        """
+        params = [
+            {"name": "@sid", "value": servant_id},
+            {"name": "@start", "value": start_date.strftime("%Y-%m-%d")},
+            {"name": "@end", "value": end_date.strftime("%Y-%m-%d")},
+        ]
+        result = self.container.query_items(query=query, parameters=params, enable_cross_partition_query=True)
+        return [record["date"] for record in result]

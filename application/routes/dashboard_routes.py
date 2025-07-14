@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from dependencies import servant_service  # import instances
+from dependencies import get_servant_service
 from datetime import datetime,timedelta
 
 dashboard_bp = Blueprint("Dashboard", __name__)
+servant_service=get_servant_service()
 
 @dashboard_bp.route("/", methods=["GET"])
 def dashboard():

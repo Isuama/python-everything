@@ -3,205 +3,145 @@
 {% block title_dashboard %}{{ _('Dashboard') }}{% endblock %}
 
 {% block content %}
-<!-- Top Widgets -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-  <!-- Total Servants -->
-  <div class="bg-white p-4 rounded shadow flex items-center gap-4">
-    <i data-lucide="users" class="w-10 h-10 text-indigo-500"></i>
+<!-- Dashboard Widgets -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+  <!-- Card -->
+  {% set cards = [
+    {'icon': 'users', 'label': _('Total Servants'), 'value_id': 'total-servants-count', 'color': 'indigo'},
+    {'icon': 'hand-coins', 'label': _('Total Loan Balance'), 'value_id': 'total-loan-balance', 'color': 'rose'},
+    {'icon': 'wallet', 'label': _("This Week's Wages"), 'value_id': 'total-weekly-wage-2', 'color': 'amber'}
+  ] %}
+  {% for card in cards %}
+  <div class="bg-white shadow-md rounded-2xl p-5 flex items-center space-x-4 hover:shadow-lg transition">
+    <div class="bg-{{ card.color }}-100 p-3 rounded-full">
+      <i data-lucide="{{ card.icon }}" class="w-6 h-6 text-{{ card.color }}-600"></i>
+    </div>
     <div>
-      <div class="text-gray-600 text-sm">Total Servants</div>
-      <div class="text-xl font-bold" id="total-servants-count">0</div>
+      <p class="text-sm text-gray-500">{{ card.label }}</p>
+      <p class="text-xl font-semibold text-gray-900" id="{{ card.value_id }}">0</p>
     </div>
   </div>
-
-  <!-- Total Loans -->
-  <div class="bg-white p-4 rounded shadow flex items-center gap-4">
-    <i data-lucide="hand-coins" class="w-10 h-10 text-red-500"></i>
-    <div>
-      <div class="text-gray-600 text-sm">Total Loans Balance</div>
-      <div class="text-xl font-bold">
-        <span id="total-loan-balance">0.00</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- This Week's Wages -->
-  <div class="bg-white p-4 rounded shadow flex items-center gap-4">
-    <i data-lucide="wallet" class="w-10 h-10 text-yellow-500"></i>
-    <div>
-      <div class="text-gray-600 text-sm">This Week's Wages</div>
-      <div class="text-xl font-bold">
-        <span id="total-weekly-wage-2">0.00</span>
-      </div>
-    </div>
-  </div>
+  {% endfor %}
 </div>
 
-<!-- Weekly Wages Table -->
-<div class="bg-white p-6 rounded shadow-md">
-  <div class="flex justify-between items-center mb-4">
-  <h2 class="text-lg font-semibold text-gray-900">
-    Weekly Wages Summary -
-    <span class="text-indigo-600">{{ monday }} - {{ sunday }}</span>
-  </h2>
-  <div class="flex gap-2">
-    <a href="{{ url_for('Dashboard.dashboard', week_offset=week_offset - 1) }}"
-       class="p-2 rounded bg-white border border-gray-300 hover:bg-indigo-50 shadow-sm"
-       title="Previous Week" aria-label="Previous Week">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-      </svg>
-    </a>
+<!-- Weekly Wages Summary Table -->
+<div class="bg-white rounded-2xl shadow-md overflow-hidden">
+  <div class="flex justify-between items-center px-6 py-4 border-b">
+    <h2 class="text-lg font-semibold text-gray-900">
+      {{ _('Weekly Wages Summary') }} — 
+      <span class="text-indigo-600">{{ monday }} - {{ sunday }}</span>
+    </h2>
 
-    <a href="{{ url_for('Dashboard.dashboard') }}"
-       class="p-2 rounded bg-white border border-gray-300 hover:bg-indigo-50 shadow-sm"
-       title="Current Week" aria-label="Current Week">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M8 7V3m8 4V3m-9 4h10a2 2 0 012 2v11a2 2 0 01-2 2H7a2 2 0 01-2-2V9a2 2 0 012-2z" />
-      </svg>
-    </a>
-
-    <a href="{{ url_for('Dashboard.dashboard', week_offset=week_offset + 1) }}"
-       class="p-2 rounded bg-white border border-gray-300 hover:bg-indigo-50 shadow-sm"
-       title="Next Week" aria-label="Next Week">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-      </svg>
-    </a>
-  </div>
-</div>
-
-
-  <form method="POST" action="/settle_weekly_balance">
-    <div class="overflow-x-auto">
-      <table class="min-w-full text-sm border border-gray-200">
-        <thead class="bg-gray-100 text-xs text-gray-700">
-          <tr>
-            <th rowspan="2" class="hidden">Servant ID</th>
-            <th rowspan="2" class="border px-2 py-1">Servant Name</th>
-            <th rowspan="2" class="border px-2 py-1">Attendance</th>
-            <th rowspan="2" class="border px-2 py-1">Absent</th>
-            <th colspan="3" class="border px-2 py-1 text-center">Loan</th>
-            <th rowspan="2" class="border px-2 py-1">Advance / Settled</th>
-            <th rowspan="2" class="border px-2 py-1">B/F</th>
-            <th rowspan="2" class="border px-2 py-1">C/F</th>
-            <th rowspan="2" class="border px-2 py-1">Weekly Wage</th>
-            <th rowspan="2" class="border px-2 py-1">Settle Date</th>
-          </tr>
-          <tr>
-            <th class="border px-2 py-1">To Settle</th>
-            <th class="border px-2 py-1">Balance</th>
-            <th class="border px-2 py-1">Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for data in weekly_wages %}
-          <tr class="hover:bg-gray-50">
-            <td class="hidden"><input type="hidden" name="servant_id" value="{{ data.servant_id }}"></td>
-            <td class="border px-2 py-1">{{ data.name }}</td>
-            <td class="border px-2 py-1 text-center">{{ data.attendance_days }}</td>
-            <td class="border px-2 py-1 text-center">{{ data.absent_days }}</td>
-
-            <!-- Loan dropdown -->
-            <td class="border px-2 py-1">
-              <select name="loan_to_settle_{{ data.servant_id }}" class="w-full border rounded px-1 py-0.5 text-xs">
-                {% if data.loans %}
-                  {% for loan in data.loans %}
-                    <option value="{{ loan.id }}">{{ loan.loan_amount }} LKR - {{ loan.date_taken }}</option>
-                  {% endfor %}
-                {% else %}
-                  <option value="">No active loans</option>
-                {% endif %}
-              </select>
-            </td>
-
-            <!-- Loan balance -->
-            <!-- {% if data.loans %}
-              {% for loan in data.loans %}
-                <td class="loan-balance border px-2 py-1 text-center">{{ loan.balance | default("0") }}</td>
-
-              {% endfor %}
-            {% else %}
-              <td class="border px-2 py-1 text-center">N/A</td>
-            {% endif %} -->
-            <td class="loan-balance border px-2 py-1 text-center">{{ data.total_loan_balance | default("0") }}</td>
-            <!-- Settlement amount -->
-            <td class="border px-2 py-1">
-              <span>{{ data.total_loan_settled or '0.0' }}</span>
-              <!-- <input type="number"
-                     class="w-full border rounded px-1 py-0.5 text-xs text-left settlement-input"
-                     name="settlement_{{ data.servant_id }}"
-                     step="0.01"
-                     min="0"
-                     max="{{ data.wage }}"
-                     data-wage="{{ data.wage }}"
-                     value="{{ data.total_loan_settled or '0.0' }}"
-                     {% if True %}disabled{% endif %}> -->
-            </td>
-            
-            <!-- Already settled / Advance -->
-            <td class="border px-2 py-1 text-center">{{ data.adavnce_or_settled | default(0) }}</td>
-
-            <!-- B/F -->
-            <td class="border px-2 py-1 text-center">
-              <span>{{ data.bf | default(0) }}</span>
-              <input type="hidden" name="bf-{{ data.servant_id }}" value="{{ data.bf | default(0) }}">
-            </td>
-
-             <!-- C/F -->
-            <!-- Carry Forward -->
-             <td class="border px-2 py-1 text-center">
-              <span id="span-cf-{{ data.servant_id }}">{{ data.cf | default(0) }}</span>
-               <input type="hidden" name="cf-{{ data.servant_id }}" value="{{ data.cf_hidden | default(0) }}">
-            </td>
-
-            <!-- Weekly wage -->
-            <td class="border px-2 py-1 text-center">
-              <!-- <span id="wage_remaining_{{ data.servant_id }}">{{ data.wage | default(0) }}</span> -->
-              <input type="number" name="wage_remaining_{{ data.servant_id }}"
-                     id="wage_hidden_{{ data.servant_id }}"
-                     value="{{ data.wage | default(0) }}">
-            </td>
-
-            <!-- Settlement date -->
-            <td class="border px-2 py-1">
-              <input type="date" class="w-full border rounded px-1 py-0.5 text-xs"
-                     name="settle_date_{{ data.servant_id }}" value="{{ data.total_wage_paid_date or '' }}"
-                     {% if data.isSettled %}disabled{% endif %}>
-            </td>
-
-            <!-- Submit button -->
-            <td class="border px-2 py-1 text-center">
-              <button type="submit"
-                      name="submit"
-                      value="{{ data.servant_id }}"
-                      class="text-xs px-2 py-1 rounded 
-                            {% if data.isSettled %}
-                              bg-gray-300 text-gray-500 cursor-not-allowed
-                            {% else %}
-                              bg-blue-500 hover:bg-blue-600 text-white
-                            {% endif %}"
-                      {% if data.isSettled %}disabled{% endif %}>
-                Settle
-              </button>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-        <tfoot>
-          <!-- <tr class="bg-gray-50 font-semibold text-right text-sm">
-            <td colspan="9" class="border px-2 py-2 text-gray-700">Total Wage for the Week:</td>
-            <td class="border px-2 py-2 text-blue-600" id="total-weekly-wage">0.00</td>
-            <td colspan="2" class="border px-2 py-2"></td>
-          </tr> -->
-        </tfoot>
-      </table>
+    <div class="flex gap-2">
+      <!-- Navigation Buttons -->
+      {% set buttons = [
+        {'url': url_for('Dashboard.dashboard', week_offset=week_offset - 1), 'svg': 'M15 19l-7-7 7-7', 'title': _('Previous')},
+        {'url': url_for('Dashboard.dashboard'), 'svg': 'M8 7V3m8 4V3m-9 4h10a2 2 0 012 2v11a2 2 0 01-2 2H7a2 2 0 01-2-2V9a2 2 0 012-2z', 'title': _('This Week')},
+        {'url': url_for('Dashboard.dashboard', week_offset=week_offset + 1), 'svg': 'M9 5l7 7-7 7', 'title': _('Next')}
+      ] %}
+      {% for btn in buttons %}
+      <a href="{{ btn.url }}" title="{{ btn.title }}"
+         class="bg-white border border-gray-300 p-2 rounded-md hover:bg-indigo-50 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ btn.svg }}" />
+        </svg>
+      </a>
+      {% endfor %}
     </div>
+  </div>
+
+  <form method="POST" action="/settle_weekly_balance" class="overflow-x-auto">
+    <table class="min-w-full text-sm table-auto border-collapse">
+      <thead class="bg-gray-50 text-gray-700 text-xs sticky top-0 z-10">
+        <tr>
+          <th class="hidden">ID</th>
+          <th class="px-3 py-2 text-left">{{ _('Servant') }}</th>
+          <th class="px-3 py-2 text-center">{{ _('Attendance') }}</th>
+          <th class="px-3 py-2 text-center">{{ _('Absent') }}</th>
+          <th colspan="3" class="px-3 py-2 text-center">{{ _('Loan') }}</th>
+          <th class="px-3 py-2 text-center">{{ _('Advance / Settled') }}</th>
+          <th class="px-3 py-2 text-center">{{ _('B/F') }}</th>
+          <th class="px-3 py-2 text-center">{{ _('C/F') }}</th>
+          <th class="px-3 py-2 text-center">{{ _('Wage') }}</th>
+          <th class="px-3 py-2 text-center">{{ _('Settle Date') }}</th>
+          <th class="px-3 py-2 text-center">{{ _('Action') }}</th>
+        </tr>
+        <tr>
+          <th colspan="4"></th>
+          <th class="px-2 py-1 text-center">{{ _('To Settle') }}</th>
+          <th class="px-2 py-1 text-center">{{ _('Balance') }}</th>
+          <th class="px-2 py-1 text-center">{{ _('Amount') }}</th>
+          <th colspan="6"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for data in weekly_wages %}
+        <tr class="hover:bg-gray-50">
+          <td class="hidden"><input type="hidden" name="servant_id" value="{{ data.servant_id }}"></td>
+          <td class="px-3 py-1">{{ data.name }}</td>
+          <td class="text-center">{{ data.attendance_days }}</td>
+          <td class="text-center">{{ data.absent_days }}</td>
+
+          <!-- Loan dropdown -->
+          <td>
+            <select name="loan_to_settle_{{ data.servant_id }}" class="border rounded px-2 py-1 text-xs w-full">
+              {% if data.loans %}
+                {% for loan in data.loans %}
+                  <option value="{{ loan.id }}">{{ loan.loan_amount }} LKR - {{ loan.date_taken }}</option>
+                {% endfor %}
+              {% else %}
+                <option value="">{{ _('No active loans') }}</option>
+              {% endif %}
+            </select>
+          </td>
+
+          <td class="loan-balance text-center">{{ data.total_loan_balance or '0' }}</td>
+          <td class="text-center">{{ data.total_loan_settled or '0.0' }}</td>
+          <td class="text-center">{{ data.adavnce_or_settled or 0 }}</td>
+
+          <td class="text-center">
+            <span>{{ data.bf or 0 }}</span>
+            <input type="hidden" name="bf-{{ data.servant_id }}" value="{{ data.bf or 0 }}">
+          </td>
+
+          <td class="text-center">
+            <span id="span-cf-{{ data.servant_id }}">{{ data.cf or 0 }}</span>
+            <input type="hidden" name="cf-{{ data.servant_id }}" value="{{ data.cf_hidden or 0 }}">
+          </td>
+
+          <td class="text-center">
+            <input type="number" name="wage_remaining_{{ data.servant_id }}"
+                   id="wage_hidden_{{ data.servant_id }}"
+                   class="w-20 border rounded px-2 py-0.5 text-xs text-center"
+                   value="{{ data.wage or 0 }}">
+          </td>
+
+          <td>
+            <input type="date" name="settle_date_{{ data.servant_id }}"
+                   class="border rounded px-2 py-1 text-xs w-full"
+                   value="{{ data.total_wage_paid_date or '' }}"
+                   {% if data.isSettled %}disabled{% endif %}>
+          </td>
+
+          <td class="text-center">
+            <button type="submit" name="submit" value="{{ data.servant_id }}"
+                    class="text-xs px-3 py-1 rounded shadow transition 
+                          {% if data.isSettled %}
+                            bg-gray-300 text-gray-500 cursor-not-allowed
+                          {% else %}
+                            bg-blue-500 hover:bg-blue-600 text-white
+                          {% endif %}"
+                    {% if data.isSettled %}disabled{% endif %}>
+              {{ _('Settle') }}
+            </button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </form>
 </div>
 
-<!-- Wage Calculation Script -->
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     updateServantCount();
@@ -210,73 +150,33 @@
   });
 
   function updateServantCount() {
-  const servantRows = document.querySelectorAll("tbody tr");
-  document.getElementById("total-servants-count").textContent = servantRows.length;
-}
+    const servantRows = document.querySelectorAll("tbody tr");
+    document.getElementById("total-servants-count").textContent = servantRows.length;
+  }
 
-function updateLoanBalance() {
-    let totalLoanBalance = 0;
-
-    // Get all loan balance cells
-    const balanceCells = document.querySelectorAll(".loan-balance");
-
-    balanceCells.forEach(cell => {
-      const val = parseFloat(cell.textContent.trim()) || 0;
-      totalLoanBalance += val;
+  function updateLoanBalance() {
+    let total = 0;
+    document.querySelectorAll(".loan-balance").forEach(cell => {
+      total += parseFloat(cell.textContent.trim()) || 0;
     });
-
-    // Optional: update display
-    const display = document.getElementById("total-loan-balance");
-    if (display) {
-      display.textContent = totalLoanBalance.toFixed(2);
-    }
-
-    //return totalLoanBalance;
+    document.getElementById("total-loan-balance").textContent = total.toFixed(2);
   }
 
-function updateTotalWeeklyWage() {
-  let totalWage = 0;
-
-  // Select all inputs whose id starts with 'wage_hidden_'
-  const wageInputs = document.querySelectorAll("input[id^='wage_hidden_']");
-
-  wageInputs.forEach(input => {
-    const val = parseFloat(input.value) || 0;
-    totalWage += val;
-  });
-
-  // Update the total display
-  const display = document.getElementById("total-weekly-wage-2");
-  if (display) {
-    display.textContent = totalWage.toFixed(2);
+  function updateTotalWeeklyWage() {
+    let total = 0;
+    document.querySelectorAll("input[id^='wage_hidden_']").forEach(input => {
+      total += parseFloat(input.value) || 0;
+    });
+    document.getElementById("total-weekly-wage-2").textContent = total.toFixed(2);
   }
-}
-</script>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const wageInputs = document.querySelectorAll("input[id^='wage_hidden_']");
-
-  wageInputs.forEach(input => {
+  document.querySelectorAll("input[id^='wage_hidden_']").forEach(input => {
     input.addEventListener("input", () => {
-      const servantId = input.id.replace("wage_hidden_", "");
-      const cfHiddenInput = document.querySelector(`input[name="cf-${servantId}"]`);
-      if (!cfHiddenInput) return;
-
-      const cfHidden = parseFloat(cfHiddenInput.value) || 0;
-      const wageValue = parseFloat(input.value) || 0;
-
-      // Allow cf to be negative now
-      const newCf = cfHidden - wageValue;
-
-      const cfSpan = document.getElementById(`span-cf-${servantId}`);
-      if (cfSpan) {
-        cfSpan.textContent = newCf.toFixed(2);
-      }
+      const id = input.id.replace("wage_hidden_", "");
+      const cfHidden = parseFloat(document.querySelector(`input[name="cf-${id}"]`)?.value || 0);
+      const newCf = cfHidden - (parseFloat(input.value) || 0);
+      document.getElementById(`span-cf-${id}`).textContent = newCf.toFixed(2);
     });
   });
-});
 </script>
-
-
 {% endblock %}

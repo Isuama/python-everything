@@ -45,7 +45,14 @@
           <span class="bg-red-100 text-red-700 text-xs font-semibold px-2 py-0.5 rounded-full">Inactive</span>
         {% endif %}
       </div>
-
+      <!-- Delete Button -->
+      <button onclick="openDeleteModal('{{ s.id }}', '{{ s.name }}')"
+              class="absolute bottom-2 right-2 text-red-600 hover:text-red-800"
+              title="Delete"
+      >
+      <i data-feather="trash-2" class="w-4 h-4"></i>
+      </button>
+      
       <!-- Edit button -->
       <button
         onclick='openModal("edit", {
@@ -62,12 +69,29 @@
       >
         <i data-feather="edit" class="w-4 h-4"></i>
       </button>
+      <!-- Delete Button -->
+
     </div>
     {% endfor %}
   </div>
 </div>
 
 {% include "modals/profile_modal.html" %}
+{% include "modals/delete_modal.html" %}
+
+<script>
+  function openDeleteModal(servantId, servantName) {
+    document.getElementById("delete-servant-name").textContent = servantName;
+    document.getElementById("deleteForm").action = `/servants/delete/${servantId}`;
+    document.getElementById("deleteModal").classList.remove("hidden");
+  }
+
+  function closeDeleteModal() {
+    document.getElementById("deleteModal").classList.add("hidden");
+  }
+
+  feather.replace();
+</script>
 
 <script>
   feather.replace();

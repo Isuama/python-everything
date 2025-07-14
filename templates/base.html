@@ -25,7 +25,7 @@
 
     <!-- Sidebar -->
     <aside class="w-64 bg-white shadow-lg">
-        <div class="p-6 text-xl font-bold border-b text-indigo-600 flex items-center gap-2">
+        <div class="px-6 py-4 text-xl font-bold border-b text-indigo-600 flex items-center gap-2">
             <i data-lucide="users" class="w-6 h-6"></i>
             <span>ServantApp</span>
         </div>
@@ -82,7 +82,7 @@
     <div class="flex-1 flex flex-col">
 
       <!-- Top Bar -->
-      <header class="flex items-center justify-between bg-white px-6 py-3 shadow">
+      <header class="flex items-center justify-between bg-white px-3 py-3 shadow">
         <h1 class="text-lg font-semibold text-gray-700">{% block title_dashboard %}{{ _('Dashboard') }}{% endblock %}</h1>
         <div class="flex items-center gap-4 relative">
   <!-- Notification Bell -->
@@ -149,7 +149,11 @@
       </header>
 
       <!-- Flash messages -->
-      <main class="p-6">
+      <main class="px-3 pt-6">
+      <!-- Page Heading -->
+      <div class="mb-4">
+        <h1 class="text-xl font-semibold text-gray-800">{% block content_dashboard %}{{ _('Dashboard') }}{% endblock %}</h1>
+      </div>
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
             {% for category, message in messages %}
@@ -163,8 +167,10 @@
             {% endfor %}
           {% endif %}
         {% endwith %}
-
-        {% block content %}{% endblock %}
+        <!-- Page Content -->
+        <div>
+          {% block content %}{% endblock %}
+        </div>
       </main>
     </div>
   </div>

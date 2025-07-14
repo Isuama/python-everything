@@ -5,7 +5,7 @@
     <button onclick="toggleModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 text-2xl">&times;</button>
 
     <!-- Form -->
-    <form id="profileForm" method="POST" action="/add" enctype="multipart/form-data" novalidate>
+    <form id="profileForm" method="POST" action="/servants/add" enctype="multipart/form-data" novalidate>
       <h2 id="modalTitle" class="text-2xl font-bold text-gray-800 text-center">Add Profile</h2>
 
       <!-- Full Name -->
@@ -127,7 +127,7 @@
       document.getElementById("photoInput").value = '';
     } else {
       modalTitle.textContent = "Add Profile";
-      form.action = "/add";
+      form.action = "/servants/add";
 
       form.reset();
       document.getElementById("photoPreview").classList.add("hidden");

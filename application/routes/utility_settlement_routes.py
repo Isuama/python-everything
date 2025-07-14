@@ -1,10 +1,12 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from dependencies import servant_service,utility_service,utility_settlement_service  # import instances
+from dependencies import get_servant_service,get_utility_service,get_utility_settlement_service
 from infrastructure.utils.date_utils import get_current_date
 
 
 utility_settlement_bp = Blueprint("utilitySettlement", __name__)
-
+servant_service=get_servant_service()
+utility_service=get_utility_service()
+utility_settlement_service=get_utility_settlement_service()
 
 @utility_settlement_bp.route("/utility_settlement", methods=["GET"])
 def get_all_utilitySettlements():

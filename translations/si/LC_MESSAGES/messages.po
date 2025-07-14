@@ -21,3 +21,119 @@ msgstr ""
 #: templates/base.html:6
 msgid "Dashboard"
 msgstr "උපකරණ පුවරුව"
+
+#: templates/servants.html:35
+msgid "Name"
+msgstr "නම"
+
+msgid "Manori"
+msgstr "මනෝරි"
+
+msgid "Hemanthi"
+msgstr "හේමන්ති"
+
+msgid "Kumudu"
+msgstr "කුමුදු"
+
+#: templates/payslip.html:35
+msgid "Month"
+msgstr "මාසය"
+
+msgid "January"
+msgstr "ජනවාරි"
+
+msgid "February"
+msgstr "පෙබරවාරි"
+
+msgid "March"
+msgstr "මාර්තු
+
+msgid "April"
+msgstr "අප්‍රේල්"
+
+msgid "May"
+msgstr "මැයි"
+
+msgid "June"
+msgstr "ජූනි"
+
+msgid "July"
+msgstr "ජූලි"
+
+msgid "August"
+msgstr "අගෝස්තු"
+
+msgid "September"
+msgstr "සැප්තැම්බර්"
+
+msgid "October"
+msgstr "ඔක්තෝබර්"
+
+msgid "November"
+msgstr "නොවැම්බර්"
+
+msgid "December"
+msgstr "දෙසැම්බර්"
+
+msgid "Mo"
+msgstr "ස"
+
+msgid "Tu"
+msgstr "අ"
+
+msgid "We"
+msgstr "බ"
+
+msgid "Th"
+msgstr "බ්‍ර"
+
+msgid "Fr"
+msgstr "සි"
+
+msgid "Sa"
+msgstr "සෙ"
+
+msgid "Su"
+msgstr "ඉ"
+
+msgid "Salary Details"
+msgstr "වැටුප් විස්තර"
+
+msgid "Per day Salary"
+msgstr "දෛනික වැටුප"
+
+msgid "Number of worked days"
+msgstr "වැඩ කල දින"
+
+msgid "Total Earnings"
+msgstr "මුළු ඉපැයීම්"
+
+msgid "Deductions"
+msgstr "අඩු කිරීම්"
+
+msgid "Loan Capital"
+msgstr "මුළු ණය"
+
+msgid "Loan Balance"
+msgstr "ගෙවීමට ඇති මුදල"
+
+msgid "Total Deductions"
+msgstr "මුළු අඩුකිරීම්"
+
+msgid "Net Pay"
+msgstr "ගෙවූ මුදල"
+
+msgid "LKR"
+msgstr "රු."
+
+msgid "Utility"
+msgstr "බිල් ගෙවීම්"
+
+msgid "Water Bill"
+msgstr "වතුර බිල"
+
+msgid "Leco-Electricity Bill"
+msgstr "ලයිට් බිල"
+
+msgid "No utility data"
+msgstr "බිල් ගෙවීම් නැත."
