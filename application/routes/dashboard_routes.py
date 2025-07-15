@@ -7,7 +7,7 @@ servant_service=get_servant_service()
 
 @dashboard_bp.route("/", methods=["GET"])
 def dashboard():
-    servants = servant_service.get_servants()
+    servants = servant_service.get_all_active_servants()
     weekly_wages = []
     # Get week offset from URL query params or default to 0
     week_offset = int(request.args.get("week_offset", 0))

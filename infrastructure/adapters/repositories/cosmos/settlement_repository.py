@@ -3,8 +3,8 @@ from core.domain.settlement import Settlement
 from infrastructure.database.cosmos import CosmosDB
 
 class CosmosSettlementRepository(SettlementPort):
-    def __init__(self):
-        self.container = CosmosDB().get_container("LoanSettlements", partition_key_path="/servant_id")
+    def __init__(self,container):
+        self.container = container
 
     def get_all(self):
         query = "SELECT c.id, c.servant_id, c.loan_id, c.settled_amount, c.settled_date FROM c"

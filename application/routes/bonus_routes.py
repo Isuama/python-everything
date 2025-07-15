@@ -1,11 +1,13 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from dependencies import servant_service,bonus_service  # import instances
+from dependencies import get_servant_service,get_bonus_service
 
 bonus_bp = Blueprint("Bonus", __name__)
+servant_service=get_servant_service()
+bonus_service=get_bonus_service()
 
 @bonus_bp.route("/bonuses", methods=["GET"])
 def get_all_bonuses():
-    servants = servant_service.get_servants()
+    servants = servant_service.get_all_active_servants()
     bonuses = bonus_service.get_all_bonuses()
 
     return render_template("bonuses.html", servants=servants,bonuses=bonuses)

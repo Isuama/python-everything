@@ -1,11 +1,9 @@
 from core.ports.servant_port import ServantPort
 from core.domain.servant import Servant
-#from infrastructure.database.cosmos import CosmosDB
 from typing import List
 
 class CosmosServantRepository(ServantPort):
     def __init__(self,container):
-        #self.container = db.get_container(container_name="Servants", partition_key_path="/id")
         self.container=container
 
     def add_servant(self, servant: Servant) -> None:

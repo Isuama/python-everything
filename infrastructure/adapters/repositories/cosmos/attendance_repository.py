@@ -1,6 +1,5 @@
 from core.ports.attendance_port import AttendancePort
 from core.domain.attendance import Attendance
-from infrastructure.database.cosmos import CosmosDB
 
 class CosmosAttendanceRepository(AttendancePort):
     def __init__(self,container):

@@ -10,7 +10,7 @@ utility_settlement_service=get_utility_settlement_service()
 
 @utility_settlement_bp.route("/utility_settlement", methods=["GET"])
 def get_all_utilitySettlements():
-    servants = servant_service.get_servants()
+    servants = servant_service.get_all_active_servants()
     utilities = utility_service.get_all_utilities()
     settlements = utility_settlement_service.get_all_utility_settlements()
 

@@ -1,11 +1,10 @@
 from core.ports.utility_port import UtilityPort
 from core.domain.utility import Utility
-from infrastructure.database.cosmos import CosmosDB
 import uuid
 
 class CosmosUtilityRepository(UtilityPort):
-    def __init__(self):
-        self.container = CosmosDB().get_container("Utility", partition_key_path="/id")
+    def __init__(self,container):
+        self.container = container
 
     def get_all_utilities(self):
          query = "SELECT c.id, c.name FROM c"

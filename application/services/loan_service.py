@@ -1,3 +1,4 @@
+from core.ports.servant_port import ServantPort
 from core.ports.loan_port import LoanPort
 from core.ports.settlement_port import SettlementPort
 from core.domain.loan import Loan
@@ -5,15 +6,16 @@ from core.domain.settlement import Settlement
 import uuid
 
 class LoanService:
-    def __init__(self, loan_repo: LoanPort, settlement_repo: SettlementPort):
-        self.loan_repo = loan_repo
-        self.settlement_repo = settlement_repo
+    def __init__(self, loan_repository:LoanPort, settlement_repository: SettlementPort):
+        self.loan_repository = loan_repository
+        self.settlement_repository = settlement_repository
 
     def get_loans(self):
-        return self.loan_repo.get_all()
+        return self.loan_repository.get_all()
 
     def get_settlements(self):
-        return self.settlement_repo.get_all()
+        setts = self.settlement_repository.get_all()
+        return setts
 
     def create_loan(self, servant_id, amount, date_taken, remark):
         loan = Loan(
@@ -24,7 +26,7 @@ class LoanService:
             date_taken=date_taken,
             remark=remark
         )
-        self.loan_repo.create(loan)
+        self.loan_repository.create(loan)
 
     def create_settlement(self, servant_id, loan_id, settled_amount, settled_date):
         settlement = Settlement(
@@ -34,8 +36,8 @@ class LoanService:
             settled_amount=settled_amount,
             settled_date=settled_date
         )
-        self.settlement_repo.create(settlement)
+        self.settlement_repository.create(settlement)
 
-        loan = self.loan_repo.get_by_id(loan_id, servant_id)
+        loan = self.loan_repository.get_by_id(loan_id, servant_id)
         loan.balance -= settled_amount
-        self.loan_repo.update(loan)
+        self.loan_repository.update(loan)
