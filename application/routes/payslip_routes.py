@@ -1,14 +1,13 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-#from dependencies import payslip_service, servant_service  # import instances
+from dependencies import get_servant_service  # import instances
 
 payslip_bp = Blueprint("payslip", __name__)
-
+servant_service=get_servant_service()
 
 @payslip_bp.route("/payslip", methods=["GET", "POST"])
 def get_payslip():
-    return
-    #servants = servant_service.get_servants()
-   
+    servants = servant_service.get_all_active_servants()
+    return render_template("payslip.html", servants=servants)
     # if request.method == "POST":
     #         data = {
     #             "servant_id": request.form.get("servant"),

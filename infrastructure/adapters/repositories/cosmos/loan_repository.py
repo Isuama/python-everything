@@ -13,11 +13,31 @@ class CosmosLoanRepository(LoanPort):
         # return [Loan(**item) for item in items]
 
     def create(self, loan: Loan):
-        self.container.create_item(loan.dict())
+        self.container.create_item(loan)
 
     def get_by_id(self, loan_id, servant_id):
-        item = self.container.read_item(item=loan_id, partition_key=servant_id)
-        return Loan(**item)
+        query = """
+            SELECT c.id, c.servant_id, c.loan_amount, c.balance, c.date_taken, c.remark
+            FROM c
+            WHERE c.id = @loan_id AND c.servant_id = @servant_id
+        """
 
-    def update(self, loan: Loan):
-        self.container.upsert_item(loan.dict())
+        parameters = [
+            {"name": "@loan_id", "value": loan_id},
+            {"name": "@servant_id", "value": servant_id}
+        ]
+
+        items = list(self.container.query_items(
+            query=query,
+            parameters=parameters,
+            enable_cross_partition_query=True  # Optional, if partitions are unknown
+        ))
+
+        return Loan(**items[0])
+
+    # def update(self, loan: Loan):
+    #     existing = self.get_by_id(loan.id)
+    #     if not existing:
+    #         raise ValueError("Loan not found")
+
+    #     self.container.upsert_item(loan.dict())

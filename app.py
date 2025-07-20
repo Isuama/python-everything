@@ -12,7 +12,10 @@ from application.routes.wages_routes import wage_bp
 from application.routes.utility_routes import utility_bp
 from application.routes.utility_settlement_routes import utility_settlement_bp
 from application.routes.bonus_routes import bonus_bp
-#from application.routes.payslip_routes import payslip_bp
+from application.routes.payslip_routes import payslip_bp
+from application.routes.settings_routes import settings_bp
+from application.routes.prediction_routes import prediction_bp
+
 from infrastructure.config.translation_config import TranslationConfig
 from flask_babel import Babel, gettext as _
 
@@ -43,6 +46,8 @@ def create_app():
     app.register_blueprint(utility_bp)
     app.register_blueprint(utility_settlement_bp)
     app.register_blueprint(bonus_bp)
-    #app.register_blueprint(payslip_bp)
+    app.register_blueprint(payslip_bp)
+    app.register_blueprint(settings_bp)
+    app.register_blueprint(prediction_bp)
     
     return app

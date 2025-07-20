@@ -89,7 +89,8 @@
 
       <!-- Top Bar -->
       <header class="flex items-center justify-between bg-white px-3 py-3 shadow">
-        <h1 class="text-lg font-semibold text-gray-700">{% block title_dashboard %}{{ _('Dashboard') }}{% endblock %}</h1>
+        <!-- <h1 class="text-lg font-semibold text-gray-700">{% block title_dashboard %}{{ _('Dashboard') }}{% endblock %}</h1> -->
+         <h1 class="text-lg font-semibold text-gray-700"></h1>
         <div class="flex items-center gap-4 relative">
   <!-- Notification Bell -->
   <button class="relative">
@@ -157,9 +158,9 @@
       <!-- Flash messages -->
       <main class="px-3 pt-6">
       <!-- Page Heading -->
-      <div class="mb-4">
+      <!-- <div class="mb-4">
         <h1 class="text-xl font-semibold text-gray-800">{% block content_dashboard %}{{ _('Dashboard') }}{% endblock %}</h1>
-      </div>
+      </div> -->
         <!-- Toast Notification -->
         <div class="fixed top-4 right-4 z-50 space-y-2">
           {% with messages = get_flashed_messages(with_categories=true) %}
