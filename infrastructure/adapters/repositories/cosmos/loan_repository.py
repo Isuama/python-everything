@@ -35,6 +35,38 @@ class CosmosLoanRepository(LoanPort):
 
         return Loan(**items[0])
 
+    def get_loan_summary_by_servant(self, servant_id):
+        # Query for total loan amount
+        query_amount = """
+            SELECT VALUE SUM(c.loan_amount)
+            FROM c
+            WHERE c.servant_id = @servant_id AND c.balance > 0
+        """
+        # Query for remaining balance
+        query_balance = """
+            SELECT VALUE SUM(c.balance)
+            FROM c
+            WHERE c.servant_id = @servant_id AND c.balance > 0
+        """
+        params = [{"name": "@servant_id", "value": servant_id}]
+
+        # Execute both queries separately
+        total_loan_amount = list(self.container.query_items(
+            query=query_amount,
+            parameters=params,
+            enable_cross_partition_query=True
+        ))[0] or 0
+
+        total_remaining_balance = list(self.container.query_items(
+            query=query_balance,
+            parameters=params,
+            enable_cross_partition_query=True
+        ))[0] or 0
+
+        return {
+            "total_loan_amount": total_loan_amount,
+            "total_remaining_balance": total_remaining_balance
+        }
     # def update(self, loan: Loan):
     #     existing = self.get_by_id(loan.id)
     #     if not existing:

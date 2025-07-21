@@ -12,3 +12,6 @@ class UtilitySettlementPort(ABC):
     def add_utility_settlement(self, utilitySettlement: UtilitySettlement) -> None:
         """Add a new utility settlement record."""
         raise NotImplementedError
+    
+    @abstractmethod
+    def get_utility_summary_by_servant(self,servant_id:str, start_date:str, end_date:str): pass

@@ -12,6 +12,10 @@ class WageAdjustmentPort(ABC):
         """Retrieve all wage records."""
         raise NotImplementedError
     
+    def get_wage_adjustments_by_id(self,id:str, start_date:str, end_date:str) -> WageAdjustment:
+        """Retrieve all wage records."""
+        raise NotImplementedError
+    
     @abstractmethod
     def add_wage_adjustments(self, data) -> None:
         """Add a new wage record."""

@@ -105,14 +105,26 @@ msgstr "දෛනික වැටුප"
 msgid "Number of worked days"
 msgstr "වැඩ කල දින"
 
+msgid "Other Earnings"
+msgstr "වෙනත් ලැබීම්"
+
 msgid "Total Earnings"
 msgstr "මුළු ඉපැයීම්"
 
 msgid "Deductions"
 msgstr "අඩු කිරීම්"
 
+msgid "Loan"
+msgstr "ණය"
+
 msgid "Loan Capital"
 msgstr "මුළු ණය"
+
+msgid "No loan data"
+msgstr "ණය නැත"
+
+msgid "No deductions found"
+msgstr "අඩු කිරීම් නැත"
 
 msgid "Loan Balance"
 msgstr "ගෙවීමට ඇති මුදල"

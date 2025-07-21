@@ -24,7 +24,7 @@ from application.services.loan_service import LoanService
 from application.services.attendance_service import AttendanceService
 from application.services.wage_adjustments_service import WageAdjustmentService
 #from application.services.dashboard_service import DashboardService
-#from application.services.payslip_service import PayslipService
+from application.services.payslip_service import PayslipService
 
 # Create CosmosDB only once
 db_instance = CosmosDB()
@@ -85,3 +85,20 @@ def get_wage_adjustment_Service():
     wage_adjustment_container = registry.get("wageAdjustments")
     wage_adjustment_repository = CosmosWageAdjustmentRepository(wage_adjustment_container)
     return WageAdjustmentService(servant_repository,wage_adjustment_repository)
+
+def get_payslip_service():
+    servant_container = registry.get("servants")
+    servant_repository = CosmosServantRepository(servant_container)
+    attendance_container = registry.get("attendance")
+    attendance_repository = CosmosAttendanceRepository(attendance_container)
+    wage_adjustment_container = registry.get("wageAdjustments")
+    wage_adjustment_repository = CosmosWageAdjustmentRepository(wage_adjustment_container)
+    loan_settlement_container = registry.get("loanSettlements")
+    loan_settlement_repository = CosmosSettlementRepository(loan_settlement_container)
+    loan_container = registry.get("loans")
+    loan_repository = CosmosLoanRepository(loan_container)
+    utility_container = registry.get("utility")
+    utility_repository = CosmosUtilityRepository(utility_container)
+    utility_settlement_container = registry.get("utilitySettlement")
+    utility_settlement_repository = CosmosUtilitySettlementRepository(utility_settlement_container)
+    return PayslipService(servant_repository,attendance_repository,wage_adjustment_repository,loan_settlement_repository,loan_repository,utility_repository,utility_settlement_repository)
