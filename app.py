@@ -15,6 +15,7 @@ from application.routes.bonus_routes import bonus_bp
 from application.routes.payslip_routes import payslip_bp
 from application.routes.settings_routes import settings_bp
 from application.routes.prediction_routes import prediction_bp
+from application.routes.auth_routes import auth_bp
 
 from infrastructure.config.translation_config import TranslationConfig
 from flask_babel import Babel, gettext as _
@@ -49,5 +50,6 @@ def create_app():
     app.register_blueprint(payslip_bp)
     app.register_blueprint(settings_bp)
     app.register_blueprint(prediction_bp)
-    
+    app.register_blueprint(auth_bp)
+
     return app

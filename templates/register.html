@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('Register') }}{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto mt-10 bg-white p-6 rounded-xl shadow-lg">
+  <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">{{ _('Create an Account') }}</h2>
+
+  <form method="POST" action="{{ url_for('auth.register') }}" class="space-y-5">
+    <!-- Name -->
+    <div>
+      <label for="name" class="block text-sm font-medium text-gray-700">{{ _('Full Name') }}</label>
+      <input type="text" id="name" name="name" required
+             class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
+
+    <!-- UserName -->
+    <div>
+      <label for="username" class="block text-sm font-medium text-gray-700">{{ _('Username') }}</label>
+      <input type="text" id="username" name="username" required
+             class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
+
+    <!-- Email -->
+    <div>
+      <label for="email" class="block text-sm font-medium text-gray-700">{{ _('Email') }}</label>
+      <input type="email" id="email" name="email" required
+             class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
+
+        <!-- Role -->
+    <div>
+      <label for="role" class="block text-sm font-medium text-gray-700">{{ _('Role') }}</label>
+      <select id="role" name="role" required
+              class="mt-1 w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <option value="user">{{ _('User') }}</option>
+        <option value="admin">{{ _('Admin') }}</option>
+      </select>
+    </div>
+
+    <!-- Password -->
+    <div>
+      <label for="password" class="block text-sm font-medium text-gray-700">{{ _('Password') }}</label>
+      <input type="password" id="password" name="password" required minlength="6"
+             class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
+
+    <!-- Confirm Password -->
+    <div>
+      <label for="confirm_password" class="block text-sm font-medium text-gray-700">{{ _('Confirm Password') }}</label>
+      <input type="password" id="confirm_password" name="confirm_password" required minlength="6"
+             class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
+
+    <!-- Upload Photo -->
+    <div>
+      <label for="photo" class="block text-sm font-medium text-gray-700">{{ _('Profile Photo') }}</label>
+      <input type="file" id="photo" name="photo" accept="image/*"
+             class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
+
+
+    <!-- Submit -->
+    <div>
+      <button type="submit"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow">
+        {{ _('Register') }}
+      </button>
+    </div>
+
+    <!-- Link to Login -->
+    <p class="text-sm text-center text-gray-500">
+      {{ _('Already have an account?') }}
+      <a href="{{ url_for('auth.login') }}" class="text-blue-600 hover:underline">{{ _('Login here') }}</a>
+    </p>
+  </form>
+</div>
+{% endblock %}

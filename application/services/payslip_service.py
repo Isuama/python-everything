@@ -67,6 +67,8 @@ class PayslipService:
         
         net_pay = total_earnings - total_deductions
 
+        # start utility settlements
+        
         # Load all utility types
         utilities = self.utility_repository.get_all_utilities()
         utility_lookup = {u.id: u.name for u in utilities}
@@ -76,25 +78,17 @@ class PayslipService:
             servant_id, start_date, end_date
         )
 
-        # Group and sum amounts by utility type name and store last paid date
-        utility_summary_dict = defaultdict(lambda: {"total_paid": 0.0, "paid_date": None})
-
-        for s in utility_settlements:
-            utility_type = utility_lookup.get(s["utility_type_id"], "Unknown")
-            paid_date = s["paid_date"]  # assume it's already a string or datetime
-
-            utility_summary_dict[utility_type]["total_paid"] += float(s["amount"])
-            utility_summary_dict[utility_type]["paid_date"] = paid_date  # overwrite with latest
-
-        # Convert to list of dicts for template rendering
+        # Directly create a list of settlements with utility name
         utility_summary = [
             {
-                "utility_type": k,
-                "total_paid": v["total_paid"],
-                "paid_date": v["paid_date"].strftime("%Y-%m-%d") if hasattr(v["paid_date"], "strftime") else v["paid_date"]
+                "utility_type": utility_lookup.get(s["utility_type_id"], "Unknown"),
+                "amount": float(s["amount"]),
+                "paid_date": s["paid_date"].strftime("%Y-%m-%d") if hasattr(s["paid_date"], "strftime") else s["paid_date"]
             }
-            for k, v in utility_summary_dict.items()
+            for s in utility_settlements
         ]
+
+        # end utility settlements
 
 
         return {
