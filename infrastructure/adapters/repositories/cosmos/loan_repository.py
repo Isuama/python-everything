@@ -13,7 +13,7 @@ class CosmosLoanRepository(LoanPort):
         # return [Loan(**item) for item in items]
 
     def create(self, loan: Loan):
-        self.container.create_item(loan)
+        self.container.create_item(loan.model_dump())
 
     def get_by_id(self, loan_id, servant_id):
         query = """

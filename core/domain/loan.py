@@ -1,7 +1,6 @@
-from dataclasses import dataclass
+from pydantic import BaseModel
 
-@dataclass
-class Loan:
+class Loan(BaseModel):
     id: str
     servant_id: str
     loan_amount: float

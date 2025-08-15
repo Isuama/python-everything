@@ -16,7 +16,12 @@ def loan():
     servants = servant_service.get_all_active_servants()
     loans = loan_service.get_loans()
     settlements = loan_service.get_settlements()
-    return render_template("loans.html", servants=servants, loans=loans, settlements=settlements)
+
+    # Convert Pydantic models to dicts
+    loans_dict = [loan.dict() for loan in loans]
+    settlements_dict = [settlement.dict() for settlement in settlements]
+
+    return render_template("loans.html", servants=servants, loans=loans_dict, settlements=settlements_dict)
 
 @loan_bp.route("/loan", methods=["POST"])
 def add_loan_or_settlement():

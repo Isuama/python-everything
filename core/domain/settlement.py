@@ -1,7 +1,6 @@
-from dataclasses import dataclass
+from pydantic import BaseModel
 
-@dataclass
-class Settlement:
+class Settlement(BaseModel):
     id: str
     servant_id: str
     loan_id: str
